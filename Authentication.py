@@ -1,19 +1,11 @@
-import json
-
 import requests
 
 
-async def loginUser(username, password):
+async def loginUser(username, password, session=requests.session()):
     loginPayload = {
-        'userHandle': username,
-        'password': password
+        "userHandle": username,
+        "password": password
     }
 
-    test = json.dumps(str(loginPayload))
-
-    jwt = requests.post("http://aperture:420/auth/login", data=test)
-    print(jwt.content)
-
-    requests.session().headers["Authorization"] = str(jwt)
-
+    return session.post("http://aperture:420/auth/login", json=loginPayload)
 
