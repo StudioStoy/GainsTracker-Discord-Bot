@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from BaseCommand import BaseCommand
 from Commands.AddWorkout import AddWorkoutCommand
 from Commands.AvailableWorkouts import AvailableWorkoutsCommand
+from Commands.Help import HelpCommand
 from Commands.Login import LoginCommand
 from Common.Methods import getDataFromResponse
 from Routines.ChangeStatus import changeStatus
@@ -65,7 +66,7 @@ async def on_message(message):
     if userId in userTokensInSession:
         jwt = userTokensInSession[userId]
         session.headers["Authorization"] = jwt
-    elif command.strip() != "login":
+    elif command.strip() != "login" and command.strip() != "help":
         json_example = '''
 login: {
     "username": "yourName", 
@@ -89,12 +90,17 @@ login: {
             login = LoginCommand(str(data["username"]), str(data["password"]))
             response = await login.execute()
             userTokensInSession[userId] = getDataFromResponse(response)
+        case "help":
+            helpMenu = HelpCommand()
+            await helpMenu.execute()
         case "available workouts":
             availableWorkouts = AvailableWorkoutsCommand()
             await availableWorkouts.execute()
         case "add workout":
             addWorkout = AddWorkoutCommand(str(data))
             await addWorkout.execute()
+        case _:
+            await message.channel.send("Unknown command chief. Try `@botname help` for a list of commands.")
 
 
 client.run(TOKEN)
