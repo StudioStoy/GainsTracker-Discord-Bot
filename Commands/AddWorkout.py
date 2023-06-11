@@ -9,11 +9,13 @@ from Common.Methods import checkStatusCode
 
 
 class AddWorkoutCommand(BaseCommand):
-    def __init__(self, workoutJson: json):
-        self.workoutJson = workoutJson
+    def __init__(self, workoutType: str):
+        self.workoutType = workoutType
 
     async def execute(self) -> requests.Response:
-        response = self.session.post(f"{BASE_URL}/gains/workout", json=self.workoutJson)
+        addWorkoutPayload = {"workoutType": self.workoutType}
+
+        response = self.session.post(f"{BASE_URL}/gains/workout", json=addWorkoutPayload)
 
         if self.responsePositive(response):
             await self.sendMessage("Successfully added workout. Let's put the _fit_ around f**ict**!")
@@ -24,6 +26,6 @@ class AddWorkoutCommand(BaseCommand):
                 await self.sendMessage("This workout is already added to your account!")
                 raise Exception
             else:
-                await checkStatusCode(response, self.message.channel, self.workoutJson["workoutType"])
+                await checkStatusCode(response, self.message.channel, self.workoutType)
 
         return response

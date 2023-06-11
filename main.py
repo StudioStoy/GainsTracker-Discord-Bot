@@ -58,7 +58,7 @@ async def on_message(message):
 
     BaseCommand.setMessage(message)
 
-    tokens = messageContent.replace("<@1117078463187271680> ", "").split("data=")
+    tokens = messageContent.replace("<@1117078463187271680> ", "").split(":", 1)
     command = str(tokens[0].strip()).lower()
 
     userId = message.author.id
@@ -67,7 +67,7 @@ async def on_message(message):
         session.headers["Authorization"] = jwt
     elif command.strip() != "login":
         json_example = '''
-login data={
+login: {
     "username": "yourName", 
     "password": "yourPassword"
 }'''
@@ -79,7 +79,10 @@ login data={
     data = {}
 
     if len(tokens) > 1:
-        data = dict(json.loads(tokens[1].strip()))
+        try:
+            data = dict(json.loads(tokens[1].strip()))
+        except json.decoder.JSONDecodeError:
+            data = tokens[1]
 
     match command:
         case "login":
@@ -90,7 +93,7 @@ login data={
             availableWorkouts = AvailableWorkoutsCommand()
             await availableWorkouts.execute()
         case "add workout":
-            addWorkout = AddWorkoutCommand(data)
+            addWorkout = AddWorkoutCommand(str(data))
             await addWorkout.execute()
 
 
