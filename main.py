@@ -1,15 +1,16 @@
 import json
-import os
-import asyncio
-import discord
 import logging
+import os
+
+import discord
 import requests
 from dotenv import load_dotenv
 
-from Authentication import loginUser
-from Commands.AddWorkout import addWorkout
-from Commands.AvailableWorkouts import availableWorkouts
-from Common.Methods import checkStatusCode, getDataFromResponse
+from BaseCommand import BaseCommand
+from Commands.AddWorkout import AddWorkoutCommand
+from Commands.AvailableWorkouts import AvailableWorkoutsCommand
+from Commands.Login import LoginCommand
+from Common.Methods import getDataFromResponse
 from Routines.ChangeStatus import changeStatus
 
 # Initialize logging.
@@ -38,8 +39,11 @@ userTokensInSession = {}
 @client.event
 async def on_ready():
     print(f"Client logged in as {client.user}")
-    logger.info("Version 0.1")
+    logger.info("[INFO] Version 0.1")
     client.loop.create_task(changeStatus(client))
+    BaseCommand.setSession(session)
+    logger.info("[INFO] Initialized session and added to BaseCommand")
+    logger.info("[INFO] Ready!")
 
 
 # When a message is sent.
@@ -51,6 +55,8 @@ async def on_message(message):
     messageContent = str(message.content)
     if not messageContent.startswith("<@1117078463187271680>"):
         return
+
+    BaseCommand.setMessage(message)
 
     tokens = messageContent.replace("<@1117078463187271680> ", "").split("data=")
     command = str(tokens[0].strip()).lower()
@@ -77,34 +83,15 @@ login data={
 
     match command:
         case "login":
-            response = await loginUser(str(data["username"]), str(data["password"]), session=session)
-            if response.status_code != 200:
-                await checkStatusCode(response, message.channel, data["username"])
-                return
-
+            login = LoginCommand(str(data["username"]), str(data["password"]))
+            response = await login.execute()
             userTokensInSession[userId] = getDataFromResponse(response)
-            await message.channel.send(f"Successfully authenticated user {data['username']}.")
-            await asyncio.sleep(2)
-            await message.channel.send(f"**Let the gains begin!**")
-
         case "available workouts":
-            response = await availableWorkouts(session=session)
-            if response.status_code != 200:
-                await checkStatusCode(response, message.channel)
-                return
-
-            workouts = getDataFromResponse(response)
-            await message.channel.send(workouts)
-
+            availableWorkouts = AvailableWorkoutsCommand()
+            await availableWorkouts.execute()
         case "add workout":
-            response = await addWorkout(data, session=session)
-            if response.status_code != 200:
-                await checkStatusCode(response, message.channel, data["workoutType"])
-                return
-
-            await message.channel.send("Successfully added workout. Let's put the _fit_ around f**ict**!")
-            await asyncio.sleep(4)
-            await message.channel.send("Still doesn't really roll of the tongue that well..")
+            addWorkout = AddWorkoutCommand(data)
+            await addWorkout.execute()
 
 
 client.run(TOKEN)

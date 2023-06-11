@@ -2,16 +2,24 @@ import json
 
 
 async def checkStatusCode(response, channel, param=""):
-    if response.status_code == 400:
-        await channel.send(f"Ai Caramba that's a bad request if i ever saw one.")
-    elif response.status_code == 401:
-        await channel.send(f"Could not authenticate user.")
-    elif response.status_code == 403:
-        await channel.send(f"User {param} not authorized.")
-    elif response.status_code == 404:
-        await channel.send(f"{param} not found.")
-    elif response.status_code == 409:
-        await channel.send(f"Conflict: {param} already exists.")
+    message = ""
+    match response.status_code:
+        case 400:
+            message = "Ai Caramba that's a bad request if I ever saw one."
+        case 401:
+            message = "Could not authenticate user."
+        case 403:
+            message = f"User {param} not authorized for this action."
+        case 404:
+            message = f"{param} not found."
+        case 409:
+            message = f"Conflict: {param} already exists/was already added."
+        case _:
+            return
+
+    if message != "":
+        await channel.send(message)
+        raise Exception
 
 
 def getDataFromResponse(response):
