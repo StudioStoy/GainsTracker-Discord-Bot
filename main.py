@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from Authentication import loginUser
 from Commands.AddWorkout import addWorkout
 from Commands.AvailableWorkouts import availableWorkouts
-from Common import checkStatusCode, getDataFromResponse
+from Common.Methods import checkStatusCode, getDataFromResponse
 from Routines.ChangeStatus import changeStatus
 
 # Initialize logging.

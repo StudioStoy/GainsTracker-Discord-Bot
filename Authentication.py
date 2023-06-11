@@ -1,5 +1,7 @@
 import requests
 
+from Common.Constants import BASE_URL
+
 
 async def loginUser(username, password, session=requests.session()):
     loginPayload = {
@@ -7,5 +9,5 @@ async def loginUser(username, password, session=requests.session()):
         "password": password
     }
 
-    return session.post("http://aperture:420/auth/login", json=loginPayload)
+    return session.post(f"{BASE_URL}/auth/login", json=loginPayload)
 

@@ -1,5 +1,7 @@
 import requests
 
+from Common.Constants import BASE_URL
+
 
 async def availableWorkouts(session=requests.session()):
-    return session.get("http://aperture:420/catalog/workout/available")
+    return session.get(f"{BASE_URL}/catalog/workout/available")
