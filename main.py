@@ -68,11 +68,7 @@ async def on_message(message):
         jwt = userTokensInSession[userId]
         session.headers["Authorization"] = jwt
     elif command.strip() != "login" and command.strip() != "help":
-        json_example = '''
-login: {
-    "username": "yourName", 
-    "password": "yourPassword"
-}'''
+        json_example = '''login: username password'''
         embed = discord.Embed(title="You're not in the session", description="Please use the login command like so:")
         embed.add_field(name="Command", value=f'```json\n{json_example}\n```', inline=False)
         await message.channel.send(embed=embed)
@@ -84,11 +80,12 @@ login: {
         try:
             data = dict(json.loads(tokens[1].strip()))
         except json.decoder.JSONDecodeError:
-            data = tokens[1]
+            data = tokens[1].strip()
 
     match command:
         case "login":
-            login = LoginCommand(str(data["username"]), str(data["password"]))
+            namePassword = data.split(" ")
+            login = LoginCommand(str(namePassword[0]), str(namePassword[1]))
             response = await login.execute()
             userTokensInSession[userId] = getDataFromResponse(response)
         case "help":
