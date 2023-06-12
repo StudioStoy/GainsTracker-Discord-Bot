@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from BaseCommand import BaseCommand
 from Commands.AddWorkout import AddWorkoutCommand
+from Commands.AvailableMeasurements import AvailableMeasurementsCommand
 from Commands.AvailableWorkouts import AvailableWorkoutsCommand
 from Commands.Help import HelpCommand
 from Commands.Login import LoginCommand
@@ -93,14 +94,17 @@ login: {
         case "help":
             helpMenu = HelpCommand()
             await helpMenu.execute()
-        case "available workouts":
+        case "workouts":
             availableWorkouts = AvailableWorkoutsCommand()
             await availableWorkouts.execute()
         case "add workout":
             addWorkout = AddWorkoutCommand(str(data))
             await addWorkout.execute()
+        case "measurements":
+            availableMeasurements = AvailableMeasurementsCommand()
+            await availableMeasurements.execute()
         case _:
-            await message.channel.send("Unknown command chief. Try `@botname help` for a list of commands.")
+            await message.channel.send("Unknown command chief. Try <@1117078463187271680> `help` for a list of commands.")
 
 
 client.run(TOKEN)

@@ -1,11 +1,12 @@
 from abc import abstractmethod
 
+import discord
 import requests
 
 
 class BaseCommand:
-    message = None
-    session = requests.session()
+    message: discord.Message = None
+    session: requests.Session = requests.session()
 
     @classmethod
     def setSession(cls, session):

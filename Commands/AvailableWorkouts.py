@@ -7,7 +7,7 @@ from Common.Methods import checkStatusCode, getDataFromResponse
 
 class AvailableWorkoutsCommand(BaseCommand):
     async def execute(self) -> requests.Response:
-        response = self.session.get(f"{BASE_URL}/catalog/workout/available")
+        response = self.session.get(f"{BASE_URL}/catalog/workout")
 
         if self.responsePositive(response):
             workouts = getDataFromResponse(response)

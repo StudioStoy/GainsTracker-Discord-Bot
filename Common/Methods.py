@@ -22,5 +22,5 @@ async def checkStatusCode(response, channel, param=""):
         raise Exception
 
 
-def getDataFromResponse(response):
+def getDataFromResponse(response) -> json:
     return json.loads(response.content)
