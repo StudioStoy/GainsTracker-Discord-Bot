@@ -21,10 +21,14 @@ login: {
 embed.add_field(name="- **login** \n_Login with your username and password_.",
                 value=f'```json\n{loginExample}\n```', inline=False)
 
-availableWorkoutsExample = '''available workouts'''
-embed.add_field(name="- **available workouts** \n_Get a list of all workouts not yet added by the user._",
-                value=f'```json\n{availableWorkoutsExample}\n```', inline=False)
+workoutDataExample = '''workouts'''
+embed.add_field(name="- **workouts** \n_Get a list of all workouts not yet added by the user._",
+                value=f'```json\n{workoutDataExample}\n```', inline=False)
 
 addWorkoutExample = '''add workout: workoutType'''
 embed.add_field(name="- **add workout**\n_Add a workout from the available workouts with its workout type name_",
                 value=f'```json\n{addWorkoutExample}\n```', inline=False)
+
+measurementDataExample = '''measurements'''
+embed.add_field(name="- **measurements** \n_Get a list of all measurement data to add to the corresponding workout._",
+                value=f'```json\n{measurementDataExample}\n```', inline=False)
