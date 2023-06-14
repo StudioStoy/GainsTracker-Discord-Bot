@@ -1,1 +1,2 @@
 BASE_URL = "http://aperture:420"
+GAINS_BOT = "<@1117078463187271680>"

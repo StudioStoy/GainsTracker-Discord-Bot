@@ -11,6 +11,7 @@ from Commands.AddWorkout import AddWorkoutCommand
 from Commands.AvailableMeasurements import AvailableMeasurementsCommand
 from Commands.AvailableWorkouts import AvailableWorkoutsCommand
 from Commands.Help import HelpCommand
+from Commands.LogWorkout import LogWorkoutCommand
 from Commands.Login import LoginCommand
 from Common.Methods import getDataFromResponse
 from Routines.ChangeStatus import changeStatus
@@ -100,8 +101,12 @@ async def on_message(message):
         case "measurements":
             availableMeasurements = AvailableMeasurementsCommand()
             await availableMeasurements.execute()
+        case "log workout":
+            lowWorkout = LogWorkoutCommand()
+            await lowWorkout.execute()
         case _:
-            await message.channel.send("Unknown command chief. Try <@1117078463187271680> `help` for a list of commands.")
+            await message.channel.send(
+                "Unknown command chief. Try <@1117078463187271680> `help` for a list of commands.")
 
 
 client.run(TOKEN)

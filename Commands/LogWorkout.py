@@ -1,0 +1,22 @@
+from BaseCommand import BaseCommand
+from Common.Constants import BASE_URL, GAINS_BOT
+from Common.Methods import getDataFromResponse, checkStatusCode
+from Views.LogWorkoutView import LogWorkoutView
+
+
+# This command, "log workout" is for existing workouts. "log new workout" is for workouts that haven't been added yet.
+class LogWorkoutCommand(BaseCommand):
+    async def execute(self):
+        workoutsResponse = self.session.get(f"{BASE_URL}/gains/workout")
+
+        if not self.responsePositive(workoutsResponse):
+            await checkStatusCode(workoutsResponse, self.message.channel)
+            return
+
+        workouts = getDataFromResponse(workoutsResponse)
+        if len(workouts) <= 0:
+            await self.sendMessage(f"You have no workouts yet! use {GAINS_BOT} `log new workout` to set a new workout.")
+            return
+
+        logWorkoutView = LogWorkoutView(workouts)
+        await self.message.channel.send(view=logWorkoutView)
