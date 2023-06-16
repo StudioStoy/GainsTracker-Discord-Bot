@@ -7,12 +7,13 @@ import requests
 from dotenv import load_dotenv
 
 from BaseCommand import BaseCommand
-from Commands.AddWorkout import AddWorkoutCommand
+from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.AvailableMeasurements import AvailableMeasurementsCommand
 from Commands.AvailableWorkouts import AvailableWorkoutsCommand
 from Commands.Help import HelpCommand
 from Commands.LogWorkout import LogWorkoutCommand
 from Commands.Login import LoginCommand
+from Common.Constants import GAINS_BOT
 from Common.Methods import getDataFromResponse
 from Routines.ChangeStatus import changeStatus
 
@@ -36,6 +37,7 @@ session.headers = {
     "accept": "application/json",
 }
 userTokensInSession = {}
+
 
 
 # Startup of the bot.
@@ -95,18 +97,20 @@ async def on_message(message):
         case "workouts":
             availableWorkouts = AvailableWorkoutsCommand()
             await availableWorkouts.execute()
-        case "add workout":
-            addWorkout = AddWorkoutCommand(str(data))
+        case "log new workout":
+            addWorkout = LogNewWorkoutCommand()
             await addWorkout.execute()
         case "measurements":
             availableMeasurements = AvailableMeasurementsCommand()
             await availableMeasurements.execute()
         case "log workout":
-            lowWorkout = LogWorkoutCommand()
-            await lowWorkout.execute()
+            logWorkout = LogWorkoutCommand()
+            await logWorkout.execute()
+        case "log workout":
+            logNewWorkout = LogNewWorkoutCommand()
+            await logNewWorkout.execute()
         case _:
-            await message.channel.send(
-                "Unknown command chief. Try <@1117078463187271680> `help` for a list of commands.")
+            await message.channel.send(f"Unknown command chief. Try {GAINS_BOT}`help` for a list of commands.")
 
 
 client.run(TOKEN)

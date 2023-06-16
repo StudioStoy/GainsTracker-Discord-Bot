@@ -27,7 +27,7 @@ class BaseCommand:
         return response.status_code == 200 or response.status_code == 204
 
     @abstractmethod
-    async def execute(self) -> requests.Response:
+    async def execute(self):
         # Implement this function like the one in the LoginCommand. Like so:
         #   response = session.action
         #   if self.responsePositive(response):
