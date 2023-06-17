@@ -3,13 +3,13 @@ import requests
 from discord.ui import Modal, TextInput
 
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, categoryFromType
+from Common.Methods import checkStatusCode, categoryFromType, tidyUpString
 from Views.WorkoutDropDownView import emojiPerCategory
 
 
 class LogWorkoutModal(Modal):
     def __init__(self, selectedWorkoutData, session: requests.Session = None):
-        super().__init__(title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + selectedWorkoutData['type']}")
+        super().__init__(title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + tidyUpString(selectedWorkoutData['type'])}")
 
         self.session = session
         self.workoutData = selectedWorkoutData

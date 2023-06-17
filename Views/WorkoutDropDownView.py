@@ -5,7 +5,7 @@ from discord import SelectOption
 from discord.ui import Select
 from discord.ui import View
 
-from Common.Methods import categoryFromType
+from Common.Methods import categoryFromType, tidyUpString
 
 
 class WorkoutDropDownView(View):
@@ -30,7 +30,7 @@ class WorkoutDropDownView(View):
                 "id": id
             }
 
-            selectOptions.append(SelectOption(label=workout["type"],
+            selectOptions.append(SelectOption(label=tidyUpString(workout["type"]),
                                               value=json.dumps(jsonData),
                                               emoji=emojiPerCategory[categoryFromType(workout['type'])],
                                               default=False))
