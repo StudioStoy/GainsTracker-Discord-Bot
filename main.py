@@ -7,8 +7,6 @@ from dotenv import load_dotenv
 
 from BaseCommand import BaseCommand
 from Commands.LogNewWorkout import LogNewWorkoutCommand
-from Commands.AvailableMeasurements import AvailableMeasurementsCommand
-from Commands.AvailableWorkouts import AvailableWorkoutsCommand
 from Commands.GetProgress import GetProgressCommand
 from Commands.Help import HelpCommand
 from Commands.LogWorkout import LogWorkoutCommand
@@ -82,24 +80,15 @@ async def on_message(message):
         case "help":
             helpMenu = HelpCommand()
             await helpMenu.execute()
-        case "workouts":
-            availableWorkouts = AvailableWorkoutsCommand()
-            await availableWorkouts.execute()
-        case "log new workout":
+        case "new workout":
             addWorkout = LogNewWorkoutCommand()
             await addWorkout.execute()
-        case "get progress":
+        case "progress":
             getProgress = GetProgressCommand()
             await getProgress.execute()
-        case "measurements":
-            availableMeasurements = AvailableMeasurementsCommand()
-            await availableMeasurements.execute()
         case "log workout":
             logWorkout = LogWorkoutCommand()
             await logWorkout.execute()
-        case "log workout":
-            logNewWorkout = LogNewWorkoutCommand()
-            await logNewWorkout.execute()
         case _:
             await message.channel.send(f"Unknown command chief. Try {GAINS_BOT} `help` for a list of commands.")
 
