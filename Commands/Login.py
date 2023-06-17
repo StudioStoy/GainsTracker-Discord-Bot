@@ -1,4 +1,4 @@
-import asyncio
+import os
 
 import requests
 
@@ -8,23 +8,30 @@ from Common.Methods import checkStatusCode
 
 
 class LoginCommand(BaseCommand):
-    def __init__(self, username: str, password: str):
-        self.username = username
-        self.password = password
+    def __init__(self, userId: str):
+        self.userId = userId
 
     async def execute(self) -> requests.Response:
         loginPayload = {
-            "userHandle": self.username,
-            "password": self.password
+            "userHandle": userIdAndName[str(self.userId)],
+            "password": os.getenv('EPIC_PASS')
         }
 
         response = self.session.post(f"{BASE_URL}/auth/login", json=loginPayload)
 
-        if self.responsePositive(response):
-            await self.sendMessage(f"Successfully authenticated user {self.username}.")
-            await asyncio.sleep(2)
-            await self.sendMessage(f"**Let the gains begin!**")
-        else:
-            await checkStatusCode(response, self.message.channel, self.username)
+        if not self.responsePositive(response):
+            await checkStatusCode(response, self.message.channel, userIdAndName[self.userId])
 
         return response
+
+
+userIdAndName = {
+    "563746765153501202": "stije",
+    "381080197153292309": "joyo",
+    "174924013238353921": "bino",
+    "186892240994566145": "soep",
+    "689447242842898456": "eef",
+    "722046797270220880": "jordt",
+    "388157910238101514": "sanda",
+    "323484846955692032": "naoh"
+}

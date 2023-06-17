@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -39,7 +38,6 @@ session.headers = {
 userTokensInSession = {}
 
 
-
 # Startup of the bot.
 @client.event
 async def on_ready():
@@ -67,28 +65,17 @@ async def on_message(message):
     command = str(tokens[0].strip()).lower()
 
     userId = message.author.id
-    if userId in userTokensInSession:
-        jwt = userTokensInSession[userId]
-        session.headers["Authorization"] = jwt
-    elif command.strip() != "login" and command.strip() != "help":
-        json_example = '''login: username password'''
-        embed = discord.Embed(title="You're not in the session", description="Please use the login command like so:")
-        embed.add_field(name="Command", value=f'```json\n{json_example}\n```', inline=False)
-        await message.channel.send(embed=embed)
-        return
+    if userId not in userTokensInSession and command.strip() != "help":
+        login = LoginCommand(userId)
+        response = await login.execute()
+        userTokensInSession[userId] = getDataFromResponse(response)
 
-    data = {}
-
-    if len(tokens) > 1:
-        try:
-            data = dict(json.loads(tokens[1].strip()))
-        except json.decoder.JSONDecodeError:
-            data = tokens[1].strip()
+    if userTokensInSession.__contains__(userId):
+        session.headers["Authorization"] = userTokensInSession[userId]
 
     match command:
         case "login":
-            namePassword = data.split(" ")
-            login = LoginCommand(str(namePassword[0]), str(namePassword[1]))
+            login = LoginCommand(userId)
             response = await login.execute()
             userTokensInSession[userId] = getDataFromResponse(response)
         case "help":

@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
@@ -25,9 +24,10 @@ class LogNewWorkoutCommand(BaseCommand):
 
         await interaction.response.defer()
         if self.responsePositive(response):
-            await self.sendMessage("Successfully added workout. Let's put the _fit_ around f**ict**!")
+            epicMessage = await self.sendMessage("Successfully added workout. Let's put the _fit_ around f**ict**!")
             await asyncio.sleep(4)
-            await self.sendMessage("Still doesn't really roll of the tongue that well..")
+            await epicMessage.edit(content="Successfully added workout. Let's put the _fit_ around f**ict**!\n\n"
+                                           "Still doesn't really roll of the tongue that well..")
         else:
             if response.status_code == 409:
                 await self.sendMessage("This workout is already added to your account!")

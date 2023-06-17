@@ -16,11 +16,14 @@ class BaseCommand:
     def setMessage(cls, messageInstance):
         cls.message = messageInstance
 
-    async def sendMessage(self, message, isEmbed=False):
-        if isEmbed:
-            await self.message.channel.send(embed=message)
-        else:
-            await self.message.channel.send(message)
+    async def sendMessage(self, message, view=None):
+        if type(message) == discord.Embed:
+            if view is not None:
+                return await self.message.channel.send(embed=message, view=view)
+            return await self.message.channel.send(embed=message)
+        if view is not None:
+            return await self.message.channel.send(message, view=view)
+        return await self.message.channel.send(message)
 
     @staticmethod
     def responsePositive(response):
