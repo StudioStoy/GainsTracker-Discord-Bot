@@ -5,6 +5,8 @@ from discord import SelectOption
 from discord.ui import Select
 from discord.ui import View
 
+from Common.Methods import categoryFromType
+
 
 class WorkoutDropDownView(View):
     def __init__(self, workoutOptions, mutateWorkoutCallback=None):
@@ -18,14 +20,19 @@ class WorkoutDropDownView(View):
 
         optionCount = 0
         for workout in self.workoutOptions:
+            try:
+                id = workout["id"]
+            except:
+                id = ""
+
             jsonData = {
                 "type": workout["type"],
-                "category": workout["category"],
-                "emoji": emojiPerCategory[workout['category']]}
+                "id": id
+            }
 
             selectOptions.append(SelectOption(label=workout["type"],
                                               value=json.dumps(jsonData),
-                                              emoji=emojiPerCategory[workout["category"]],
+                                              emoji=emojiPerCategory[categoryFromType(workout['type'])],
                                               default=False))
             optionCount += 1
 

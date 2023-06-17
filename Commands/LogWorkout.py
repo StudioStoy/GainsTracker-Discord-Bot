@@ -1,5 +1,3 @@
-import json
-
 import discord
 
 from BaseCommand import BaseCommand
@@ -27,5 +25,5 @@ class LogWorkoutCommand(BaseCommand):
         await self.message.channel.send(view=logWorkoutView)
 
     async def workoutSelectCallback(self, selectedDict, interaction: discord.Interaction = None):
-        workoutModal = LogWorkoutModal(selectedDict)
+        workoutModal = LogWorkoutModal(selectedDict, session=self.session)
         await interaction.response.send_modal(workoutModal)

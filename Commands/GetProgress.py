@@ -1,13 +1,10 @@
-import re
-
 import discord
-import requests
 from discord.ui import View, Button
 
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, getDataFromResponse
-from Views.PageUtils import getEmoji, tidyUpString
+from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType
+from Views.PageUtils import getEmojiPerCategory
 
 
 class GetProgressCommand(BaseCommand):
@@ -56,27 +53,31 @@ class GetProgressCommand(BaseCommand):
         if self.responsePositive(response):
             workouts = getDataFromResponse(response)
             categories = []
-            if len(workouts) is 0:
+            if len(workouts) == 0:
                 await self.sendMessage("Add some workouts first gainer! Use {GAINS_BOT} `log new workout` "
                                        "to log your first workout.")
                 return
 
             for workout in workouts:
-                if workout["category"] not in categories:
-                    categories.append(workout["category"])
+                if categoryFromType(workout['type']) not in categories:
+                    categories.append(categoryFromType(workout['type']))
 
             for category in categories:
                 embed = discord.Embed(
-                    title=getEmoji(category) + " " + tidyUpString(category),
+                    title=getEmojiPerCategory(category) + " " + tidyUpString(category),
                     colour=discord.Colour.green()
                 )
                 self.pages.append(embed)
 
             for workout in workouts:
+                if workout["personalBest"] is None:
+                    continue
+
                 for page in self.pages:
-                    if tidyUpString(workout["category"]) in page.title:
+                    if tidyUpString(categoryFromType(workout['type'])) in page.title:
                         workoutName = tidyUpString(workout["type"])
-                        match tidyUpString(page.title)[2:]:
+                        bread = tidyUpString(page.title)[2:].strip()
+                        match tidyUpString(page.title)[2:].strip():
                             case "reps":
                                 pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
                                 page.add_field(
@@ -86,21 +87,19 @@ class GetProgressCommand(BaseCommand):
                             case "strength":
                                 pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
                                      str(workout["personalBest"]["data"]["WeightUnit"]) + "\n" + "Reps: " + \
-                                     str(workout["personalBest"]["data"]["TotalReps"])
+                                     str(workout["personalBest"]["data"]["Reps"])
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
                             case "time endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + " " + \
-                                     str(workout["personalBest"]["data"]["TimeUnit"])
+                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
                             case "time and distance endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + " " + \
-                                     str(workout["personalBest"]["data"]["TimeUnit"]) + "\n" + "Distance: " + \
+                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + " Distance: " + \
                                      str(workout["personalBest"]["data"]["Distance"]) + " " + \
                                      str(workout["personalBest"]["data"]["DistanceUnit"])
                                 page.add_field(

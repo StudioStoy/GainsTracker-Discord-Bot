@@ -16,7 +16,7 @@ def createBasicPage(title="Gainer time") -> discord.Embed:
     return page
 
 
-def getEmoji(category):
+def getEmojiPerCategory(category):
     match category:
         case "Strength":
             return '🏋️'
@@ -26,8 +26,3 @@ def getEmoji(category):
             return '⏱'
         case "TimeAndDistanceEndurance":
             return '🚀'
-
-
-def tidyUpString(string):
-    tidiedString = re.sub(r'(?<![A-Z\W])(?=[A-Z])', ' ', string).lower().lstrip()
-    return tidiedString.capitalize()
