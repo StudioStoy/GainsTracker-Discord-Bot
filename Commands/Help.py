@@ -15,7 +15,7 @@ embed = discord.Embed(title="Help menu", description="A list of possible command
     .set_author(name="Website: Studio Stoy", url="https://www.studiostoy.nl") \
     .set_footer(text=f"Version {GAINS_VERSION}")
 
-logNewWorkoutExample = '''log new workout'''
+logNewWorkoutExample = '''new workout'''
 embed.add_field(name="- **Add new workout**\n_Select a new workout from the available workouts._",
                 value=f'```json\n{logNewWorkoutExample}\n```', inline=False)
 

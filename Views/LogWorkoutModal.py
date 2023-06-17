@@ -64,7 +64,7 @@ class LogWorkoutModal(Modal):
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
 
-        await interaction.channel.send("GAINZZZZZZZZ")
+        await interaction.channel.send("GAINZZZZZZZZ (success)")
         await interaction.response.defer()
 
 

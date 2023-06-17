@@ -7,7 +7,7 @@ from Views.LogWorkoutModal import LogWorkoutModal
 from Views.WorkoutDropDownView import WorkoutDropDownView
 
 
-# This command, "log workout" is for existing workouts. "log new workout" is for workouts that haven't been added yet.
+# This command, "log" is for existing workouts. "new workout" is for workouts that haven't been added yet.
 class LogWorkoutCommand(BaseCommand):
     async def execute(self):
         workoutsResponse = self.session.get(f"{BASE_URL}/gains/workout")
@@ -17,7 +17,7 @@ class LogWorkoutCommand(BaseCommand):
 
         workouts = getDataFromResponse(workoutsResponse)
         if len(workouts) <= 0:
-            await self.sendMessage(f"You have no workouts yet! Use {GAINS_BOT} `log new workout` to set a new workout.")
+            await self.sendMessage(f"You have no workouts yet! Use {GAINS_BOT} `new workout` to set a new workout.")
             return
 
         logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.workoutSelectCallback)

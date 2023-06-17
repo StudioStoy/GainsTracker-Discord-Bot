@@ -2,7 +2,7 @@ import discord
 from discord.ui import View, Button
 
 from BaseCommand import BaseCommand
-from Common.Constants import BASE_URL
+from Common.Constants import BASE_URL, GAINS_BOT
 from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType
 from Views.PageUtils import getEmojiPerCategory
 
@@ -54,7 +54,7 @@ class GetPBsCommand(BaseCommand):
             workouts = getDataFromResponse(response)
             categories = []
             if len(workouts) == 0:
-                await self.sendMessage("Add some workouts first gainer! Use {GAINS_BOT} `log new workout` "
+                await self.sendMessage(f"Add some workouts first gainer! Use {GAINS_BOT} `new workout` "
                                        "to log your first workout.")
                 return
 
@@ -76,7 +76,6 @@ class GetPBsCommand(BaseCommand):
                 for page in self.pages:
                     if tidyUpString(categoryFromType(workout['type'])) in page.title:
                         workoutName = tidyUpString(workout["type"])
-                        bread = tidyUpString(page.title)[2:].strip()
                         match tidyUpString(page.title)[2:].strip():
                             case "reps":
                                 pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
@@ -86,7 +85,7 @@ class GetPBsCommand(BaseCommand):
                                 )
                             case "strength":
                                 pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
-                                     str(workout["personalBest"]["data"]["WeightUnit"]) + "\n" + "Reps: " + \
+                                     str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
                                      str(workout["personalBest"]["data"]["Reps"])
                                 page.add_field(
                                     name=workoutName.capitalize(),
@@ -99,7 +98,7 @@ class GetPBsCommand(BaseCommand):
                                     value=f'```{pb}```', inline=True
                                 )
                             case "time and distance endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + " Distance: " + \
+                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + "\nDistance: " + \
                                      str(workout["personalBest"]["data"]["Distance"]) + " " + \
                                      str(workout["personalBest"]["data"]["DistanceUnit"])
                                 page.add_field(
