@@ -20,10 +20,10 @@ class LogNewWorkoutCommand(BaseCommand):
         logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
         await self.message.channel.send(view=logWorkoutView)
 
-    async def createNewWorkoutCallback(self, selected, interaction=None):
-        jsonData = json.loads(selected)
-        response = self.session.post(f"{BASE_URL}/gains/workout", json={"workoutType": jsonData["type"]})
+    async def createNewWorkoutCallback(self, selectedDict, interaction=None):
+        response = self.session.post(f"{BASE_URL}/gains/workout", json={"workoutType": selectedDict["type"]})
 
+        await interaction.response.defer()
         if self.responsePositive(response):
             await self.sendMessage("Successfully added workout. Let's put the _fit_ around f**ict**!")
             await asyncio.sleep(4)
