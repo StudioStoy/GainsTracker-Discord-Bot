@@ -1,115 +1,26 @@
-import discord
-from discord.ui import View, Button
-
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType
-from Views.PageUtils import getEmojiPerCategory
+from Common.Methods import checkStatusCode, getDataFromResponse
+from Views.WorkoutDropDownView import WorkoutDropDownView
 
 
 class GetProgressCommand(BaseCommand):
+
     def __init__(self):
-        self.pages = []
-        self.currentPage = 0
-
-    def getView(self, pagePosition):
-        buttons = [
-            Button(emoji="⏮️", label=' ', style=discord.ButtonStyle.blurple, custom_id='nav_first'),
-            Button(emoji="⬅️", label=' ', style=discord.ButtonStyle.blurple, custom_id='nav_back'),
-            Button(emoji="➡️", label=' ', style=discord.ButtonStyle.blurple, custom_id='nav_next'),
-            Button(emoji="⏭️", label=' ', style=discord.ButtonStyle.blurple, custom_id='nav_last')
-        ]
-        view = View()
-
-        # set navigation callback to buttons and add them to the view
-        for button in buttons:
-            if button.custom_id == "nav_first" or button.custom_id == "nav_back":
-                button.disabled = pagePosition <= 0
-            elif button.custom_id == "nav_last" or button.custom_id == "nav_next":
-                button.disabled = pagePosition >= len(self.pages) - 1
-
-            button.callback = self.page_navigation
-            view.add_item(button)
-
-        return view
-
-    async def page_navigation(self, interaction: discord.Interaction):
-        match interaction.data["custom_id"]:
-            case "nav_first":
-                self.currentPage = 0
-            case "nav_next":
-                self.currentPage += 1
-            case "nav_back":
-                self.currentPage -= 1
-            case "nav_last":
-                self.currentPage = len(self.pages) - 1
-
-        await interaction.message.edit(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
-
-        await interaction.response.defer()  # Even if the compiler thinks it doesn't exist, .defer() does.
+        self.workouts = []
 
     async def execute(self):
-        response = self.session.get(f"{BASE_URL}/gains/workout")
-        if self.responsePositive(response):
-            workouts = getDataFromResponse(response)
-            categories = []
-            if len(workouts) == 0:
-                await self.sendMessage("Add some workouts first gainer! Use {GAINS_BOT} `log new workout` "
-                                       "to log your first workout.")
-                return
+        workoutsResponse = self.session.get(f"{BASE_URL}/catalog/workout")
 
-            for workout in workouts:
-                if categoryFromType(workout['type']) not in categories:
-                    categories.append(categoryFromType(workout['type']))
+        if not self.responsePositive(workoutsResponse):
+            await checkStatusCode(workoutsResponse, self.message.channel)
+            return
 
-            for category in categories:
-                embed = discord.Embed(
-                    title=getEmojiPerCategory(category) + " " + tidyUpString(category),
-                    colour=discord.Colour.green()
-                )
-                self.pages.append(embed)
+        self.workouts = getDataFromResponse(workoutsResponse)
+        logWorkoutView = WorkoutDropDownView(self.workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
+        await self.message.channel.send(view=logWorkoutView)
+        # await interaction
 
-            for workout in workouts:
-                if workout["personalBest"] is None:
-                    continue
-
-                for page in self.pages:
-                    if tidyUpString(categoryFromType(workout['type'])) in page.title:
-                        workoutName = tidyUpString(workout["type"])
-                        bread = tidyUpString(page.title)[2:].strip()
-                        match tidyUpString(page.title)[2:].strip():
-                            case "reps":
-                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                            case "strength":
-                                pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
-                                     str(workout["personalBest"]["data"]["WeightUnit"]) + "\n" + "Reps: " + \
-                                     str(workout["personalBest"]["data"]["Reps"])
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                            case "time endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                            case "time and distance endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + " Distance: " + \
-                                     str(workout["personalBest"]["data"]["Distance"]) + " " + \
-                                     str(workout["personalBest"]["data"]["DistanceUnit"])
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-            i = 0
-            await self.message.channel.send(embed=self.pages[i], view=self.getView(self.currentPage))
-
-        else:
-            await checkStatusCode(response, self.message.channel)
-
-        return response
+    async def createNewWorkoutCallback(self, selectedDict, interaction=None):
+        await interaction.response.defer()
+        await self.sendMessage("ello :D")

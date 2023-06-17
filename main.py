@@ -6,8 +6,9 @@ import requests
 from dotenv import load_dotenv
 
 from BaseCommand import BaseCommand
-from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.GetProgress import GetProgressCommand
+from Commands.LogNewWorkout import LogNewWorkoutCommand
+from Commands.GetPBs import GetPBsCommand
 from Commands.Help import HelpCommand
 from Commands.LogWorkout import LogWorkoutCommand
 from Commands.Login import LoginCommand
@@ -86,6 +87,9 @@ async def on_message(message):
         case "progress":
             getProgress = GetProgressCommand()
             await getProgress.execute()
+        case "pbs":
+            getPBs = GetPBsCommand()
+            await getPBs.execute()
         case "log workout":
             logWorkout = LogWorkoutCommand()
             await logWorkout.execute()
