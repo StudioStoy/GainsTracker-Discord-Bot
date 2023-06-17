@@ -19,7 +19,7 @@ class GetPBsCommand(BaseCommand):
             Button(emoji="➡️", label=' ', style=discord.ButtonStyle.green, custom_id='nav_next'),
             Button(emoji="⏭️", label=' ', style=discord.ButtonStyle.green, custom_id='nav_last')
         ]
-        view = View()
+        view = View(timeout=None)
 
         # set navigation callback to buttons and add them to the view
         for button in buttons:

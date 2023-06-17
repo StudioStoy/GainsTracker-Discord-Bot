@@ -1,3 +1,7 @@
+import asyncio
+
+import discord
+
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
 from Common.Methods import checkStatusCode, getDataFromResponse
@@ -28,6 +32,13 @@ class LogNewWorkoutCommand(BaseCommand):
         if self.responsePositive(response):
             workoutModal = LogWorkoutModal(selectedDict, session=self.session)
             await interaction.response.send_modal(workoutModal)
+
+            epicMessage: discord.Message = await interaction.channel.send(
+                "Successfully added workout. Let's put the _fit_ around f**ict**!")
+            await interaction.response.defer()
+            await asyncio.sleep(3)
+            await epicMessage.edit(content="Successfully added workout. Let's put the _fit_ around f**ict**!\n"
+                                           "Still doesn't really roll of the tongue that easy..")
         else:
             await interaction.response.defer()
             if response.status_code == 409:

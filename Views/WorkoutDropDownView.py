@@ -10,7 +10,7 @@ from Common.Methods import categoryFromType, tidyUpString
 
 class WorkoutDropDownView(View):
     def __init__(self, workoutOptions, mutateWorkoutCallback=None):
-        super().__init__()
+        super().__init__(timeout=None)
         self.workoutOptions = workoutOptions
         self.mutateSelectedWorkoutCallback = mutateWorkoutCallback
         self.add_item(self.createWorkoutSelect())

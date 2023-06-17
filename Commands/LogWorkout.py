@@ -3,7 +3,6 @@ import discord
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL, GAINS_BOT
 from Common.Methods import getDataFromResponse, checkStatusCode
-
 from Views.LogWorkoutModal import LogWorkoutModal
 from Views.WorkoutDropDownView import WorkoutDropDownView
 

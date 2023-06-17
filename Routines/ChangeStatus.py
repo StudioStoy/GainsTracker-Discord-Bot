@@ -13,6 +13,7 @@ async def changeStatus(client):
 
         await asyncio.sleep(300.0)
 
+
 gymBroQuotes = [
     "Train your chest to be the best",
     "Lift together, get big together",

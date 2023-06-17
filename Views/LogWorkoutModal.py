@@ -14,6 +14,7 @@ class LogWorkoutModal(Modal):
         super().__init__(
             title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + tidyUpString(selectedWorkoutData['type'])}")
 
+        self.timeout = None
         self.session = session
         self.workoutData = selectedWorkoutData
         self.createInputFields(self.workoutData)
@@ -25,27 +26,33 @@ class LogWorkoutModal(Modal):
 
     async def submitDataCallback(self, interaction: discord.Interaction):
         data = {}
-        match categoryFromType(self.workoutData["type"]):
-            case "Strength":
-                data = {
-                    "Weight": float(tryAndFindInputFromModal(interaction.data, "weightInput")),
-                    "WeightUnit": "Kilograms",
-                    "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
-                }
-            case "Reps":
-                data = {
-                    "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
-                }
-            case "TimeEndurance":
-                data = {
-                    "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput"))
-                }
-            case "TimeAndDistanceEndurance":
-                data = {
-                    "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput")),
-                    "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
-                    "DistanceUnit": "Kilometers"
-                }
+        try:
+            match categoryFromType(self.workoutData["type"]):
+                case "Strength":
+                    data = {
+                        "Weight": float(tryAndFindInputFromModal(interaction.data, "weightInput")),
+                        "WeightUnit": "Kilograms",
+                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
+                    }
+                case "Reps":
+                    data = {
+                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
+                    }
+                case "TimeEndurance":
+                    data = {
+                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                    }
+                case "TimeAndDistanceEndurance":
+                    data = {
+                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput")),
+                        "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
+                        "DistanceUnit": "Kilometers"
+                    }
+        except ValueError:
+            await interaction.channel.send(
+                "Please make sure you only input numbers or text where applicable, not mixed.")
+            await asyncio.sleep(2)
+            await interaction.channel.send("You peanut.")
 
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
@@ -57,12 +64,8 @@ class LogWorkoutModal(Modal):
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
 
-        epicMessage: discord.Message = await interaction.channel.send(
-            "Successfully added workout. Let's put the _fit_ around f**ict**!")
+        await interaction.channel.send("GAINZZZZZZZZ")
         await interaction.response.defer()
-        await asyncio.sleep(3)
-        await epicMessage.edit(content="Successfully added workout. Let's put the _fit_ around f**ict**!\n"
-                                       "Still doesn't really roll of the tongue that easy..")
 
 
 def tryAndFindInputFromModal(interactionData, inputName):

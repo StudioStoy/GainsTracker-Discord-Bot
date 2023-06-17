@@ -6,13 +6,13 @@ import requests
 from dotenv import load_dotenv
 
 from BaseCommand import BaseCommand
-from Commands.GetProgress import GetProgressCommand
-from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.GetPBs import GetPBsCommand
+from Commands.GetProgress import GetProgressCommand
 from Commands.Help import HelpCommand
+from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.LogWorkout import LogWorkoutCommand
 from Commands.Login import LoginCommand
-from Common.Constants import GAINS_BOT
+from Common.Constants import GAINS_BOT, GAINS_VERSION
 from Common.Methods import getDataFromResponse
 from Routines.ChangeStatus import changeStatus
 
@@ -42,7 +42,7 @@ userTokensInSession = {}
 @client.event
 async def on_ready():
     print(f"Client logged in as {client.user}")
-    logger.info("[INFO] Version 0.1")
+    logger.info(f"[INFO] Version {GAINS_VERSION}")
     client.loop.create_task(changeStatus(client))
     BaseCommand.setSession(session)
     logger.info("[INFO] Initialized session and added to BaseCommand")
@@ -90,7 +90,7 @@ async def on_message(message):
         case "pbs":
             getPBs = GetPBsCommand()
             await getPBs.execute()
-        case "log workout":
+        case "log":
             logWorkout = LogWorkoutCommand()
             await logWorkout.execute()
         case _:
