@@ -1,6 +1,12 @@
+import json
+
+import discord
+
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL, GAINS_BOT
 from Common.Methods import getDataFromResponse, checkStatusCode
+
+from Views.LogWorkoutModal import LogWorkoutModal
 from Views.WorkoutDropDownView import WorkoutDropDownView
 
 
@@ -17,5 +23,9 @@ class LogWorkoutCommand(BaseCommand):
             await self.sendMessage(f"You have no workouts yet! use {GAINS_BOT} `log new workout` to set a new workout.")
             return
 
-        logWorkoutView = WorkoutDropDownView(workouts)
+        logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.workoutSelectCallback)
         await self.message.channel.send(view=logWorkoutView)
+
+    async def workoutSelectCallback(self, selectedDict, interaction: discord.Interaction = None):
+        workoutModal = LogWorkoutModal(selectedDict)
+        await interaction.response.send_modal(workoutModal)

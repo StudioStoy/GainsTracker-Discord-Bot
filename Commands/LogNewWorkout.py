@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
@@ -16,11 +17,12 @@ class LogNewWorkoutCommand(BaseCommand):
 
         workouts = getDataFromResponse(workoutsResponse)
 
-        logWorkoutView = WorkoutDropDownView(workouts, isNew=True, workoutSelectCallback=self.workoutSelectCallback)
+        logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
         await self.message.channel.send(view=logWorkoutView)
 
-    async def workoutSelectCallback(self, selected):
-        response = self.session.post(f"{BASE_URL}/gains/workout", json={"workoutType": selected})
+    async def createNewWorkoutCallback(self, selected, interaction=None):
+        jsonData = json.loads(selected)
+        response = self.session.post(f"{BASE_URL}/gains/workout", json={"workoutType": jsonData["type"]})
 
         if self.responsePositive(response):
             await self.sendMessage("Successfully added workout. Let's put the _fit_ around f**ict**!")
