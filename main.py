@@ -9,6 +9,7 @@ from BaseCommand import BaseCommand
 from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.AvailableMeasurements import AvailableMeasurementsCommand
 from Commands.AvailableWorkouts import AvailableWorkoutsCommand
+from Commands.GetProgress import GetProgressCommand
 from Commands.Help import HelpCommand
 from Commands.LogWorkout import LogWorkoutCommand
 from Commands.Login import LoginCommand
@@ -87,6 +88,9 @@ async def on_message(message):
         case "log new workout":
             addWorkout = LogNewWorkoutCommand()
             await addWorkout.execute()
+        case "get progress":
+            getProgress = GetProgressCommand()
+            await getProgress.execute()
         case "measurements":
             availableMeasurements = AvailableMeasurementsCommand()
             await availableMeasurements.execute()
@@ -97,7 +101,7 @@ async def on_message(message):
             logNewWorkout = LogNewWorkoutCommand()
             await logNewWorkout.execute()
         case _:
-            await message.channel.send(f"Unknown command chief. Try {GAINS_BOT}`help` for a list of commands.")
+            await message.channel.send(f"Unknown command chief. Try {GAINS_BOT} `help` for a list of commands.")
 
 
 client.run(TOKEN)

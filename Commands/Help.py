@@ -5,7 +5,7 @@ from BaseCommand import BaseCommand
 
 class HelpCommand(BaseCommand):
     async def execute(self):
-        await self.sendMessage(embed, isEmbed=True)
+        await self.sendMessage(embed)
 
 
 embed = discord.Embed(title="Help menu", description="A list of possible commands", colour=discord.Colour.green())\

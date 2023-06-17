@@ -1,3 +1,5 @@
+import re
+
 import discord
 from discord import Embed
 
@@ -12,3 +14,20 @@ def createBasicPage(title="Gainer time") -> discord.Embed:
     page.set_footer(text="versie 0.4.0")
 
     return page
+
+
+def getEmoji(category):
+    match category:
+        case "Strength":
+            return '🏋️'
+        case "Reps":
+            return '💪'
+        case "TimeEndurance":
+            return '⏱'
+        case "TimeAndDistanceEndurance":
+            return '🚀'
+
+
+def tidyUpString(string):
+    tidiedString = re.sub(r'(?<![A-Z\W])(?=[A-Z])', ' ', string).lower().lstrip()
+    return tidiedString.capitalize()
