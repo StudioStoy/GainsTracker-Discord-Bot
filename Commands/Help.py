@@ -5,7 +5,7 @@ from BaseCommand import BaseCommand
 
 class HelpCommand(BaseCommand):
     async def execute(self):
-        await self.sendMessage(embed, isEmbed=True)
+        await self.sendMessage(embed)
 
 
 embed = discord.Embed(title="Help menu", description="A list of possible commands", colour=discord.Colour.green())\
@@ -13,9 +13,9 @@ embed = discord.Embed(title="Help menu", description="A list of possible command
     .set_author(name="Website: Studio Stoy", url="https://www.studiostoy.nl")\
     .set_footer(text="Version 0.5")
 
-loginExample = '''login: <username> <password>'''
-embed.add_field(name="- **login** \n_Login with your username and password_.",
-                value=f'```json\n{loginExample}\n```', inline=False)
+# loginExample = '''login: <username> <password>'''
+# embed.add_field(name="- **login** \n_Login with your username and password_.",
+#                 value=f'```json\n{loginExample}\n```', inline=False)
 
 workoutDataExample = '''workouts'''
 embed.add_field(name="- **workouts** \n_Get a list of all workouts not yet added by the user._",

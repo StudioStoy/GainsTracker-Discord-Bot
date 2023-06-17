@@ -27,6 +27,6 @@ class AvailableMeasurementsCommand(BaseCommand):
                                 value=f'```json\n{json.dumps(measurementData, indent=4)}\n```', inline=True)
                 inlineCount += 1
 
-            await self.sendMessage(embed, isEmbed=True)
+            await self.sendMessage(embed)
         else:
             await checkStatusCode(response, self.message.channel)
