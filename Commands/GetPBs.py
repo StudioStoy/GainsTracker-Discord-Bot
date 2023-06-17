@@ -69,13 +69,20 @@ class GetPBsCommand(BaseCommand):
                 )
                 self.pages.append(embed)
 
+            inlineCount = 0
             for workout in workouts:
                 if workout["personalBest"] is None:
                     continue
 
                 for page in self.pages:
+                    page: discord.Embed
                     if tidyUpString(categoryFromType(workout['type'])) in page.title:
                         workoutName = tidyUpString(workout["type"])
+
+                        if inlineCount >= 2:
+                            page.add_field(name='', value='', inline=False)
+                            inlineCount = 0
+
                         match tidyUpString(page.title)[2:].strip():
                             case "reps":
                                 pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
@@ -83,6 +90,7 @@ class GetPBsCommand(BaseCommand):
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
+                                inlineCount += 1
                             case "strength":
                                 pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
                                      str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
@@ -91,12 +99,14 @@ class GetPBsCommand(BaseCommand):
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
+                                inlineCount += 1
                             case "time endurance":
                                 pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
+                                inlineCount += 1
                             case "time and distance endurance":
                                 pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + "\nDistance: " + \
                                      str(workout["personalBest"]["data"]["Distance"]) + " " + \
@@ -105,6 +115,8 @@ class GetPBsCommand(BaseCommand):
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
+                                inlineCount += 1
+
             i = 0
             await self.message.channel.send(embed=self.pages[i], view=self.getView(self.currentPage))
 
