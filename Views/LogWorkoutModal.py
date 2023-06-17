@@ -24,16 +24,9 @@ repsInputs = [
 
 strengthInputs = [
     TextInput(
-        label="Amount of weight:",
+        label="Amount of weight in kg:",
         placeholder='0',
         max_length=3,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        label="Weight unit:",
-        placeholder='kilograms/grams',
-        max_length=9,
         required=True,
         style=discord.TextStyle.short
     ),
@@ -65,16 +58,9 @@ timeAndDistanceEnduranceInputs = [
             style=discord.TextStyle.short
     ),
     TextInput(
-        label="Distance:",
+        label="Distance in km:",
         placeholder='0',
         max_length=6,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        label="Distance unit:",
-        placeholder='kilometers/meters',
-        max_length=10,
         required=True,
         style=discord.TextStyle.short
     )
