@@ -57,7 +57,8 @@ class GetProgressCommand(BaseCommand):
             workouts = getDataFromResponse(response)
             categories = []
             if len(workouts) is 0:
-                await self.sendMessage("Add some workouts first gainer!")
+                await self.sendMessage("Add some workouts first gainer! Use {GAINS_BOT} `log new workout` "
+                                       "to log your first workout.")
                 return
 
             for workout in workouts:

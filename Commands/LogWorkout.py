@@ -20,7 +20,7 @@ class LogWorkoutCommand(BaseCommand):
 
         workouts = getDataFromResponse(workoutsResponse)
         if len(workouts) <= 0:
-            await self.sendMessage(f"You have no workouts yet! use {GAINS_BOT} `log new workout` to set a new workout.")
+            await self.sendMessage(f"You have no workouts yet! Use {GAINS_BOT} `log new workout` to set a new workout.")
             return
 
         logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.workoutSelectCallback)
