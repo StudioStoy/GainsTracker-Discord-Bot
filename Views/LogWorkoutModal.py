@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 import requests
 from discord.ui import Modal, TextInput
@@ -9,7 +11,8 @@ from Views.WorkoutDropDownView import emojiPerCategory
 
 class LogWorkoutModal(Modal):
     def __init__(self, selectedWorkoutData, session: requests.Session = None):
-        super().__init__(title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + tidyUpString(selectedWorkoutData['type'])}")
+        super().__init__(
+            title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + tidyUpString(selectedWorkoutData['type'])}")
 
         self.session = session
         self.workoutData = selectedWorkoutData
@@ -44,15 +47,22 @@ class LogWorkoutModal(Modal):
                     "DistanceUnit": "Kilometers"
                 }
 
-        await interaction.response.defer()
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
             "data": data
         }
 
-        response = self.session.post(url=f"{BASE_URL}/gains/workout/{self.workoutData['id']}/measurement", json=requestData)
+        response = self.session.post(url=f"{BASE_URL}/gains/workout/{self.workoutData['id']}/measurement",
+                                     json=requestData)
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
+
+        epicMessage: discord.Message = await interaction.channel.send(
+            "Successfully added workout. Let's put the _fit_ around f**ict**!")
+        await interaction.response.defer()
+        await asyncio.sleep(3)
+        await epicMessage.edit(content="Successfully added workout. Let's put the _fit_ around f**ict**!\n"
+                                       "Still doesn't really roll of the tongue that easy..")
 
 
 def tryAndFindInputFromModal(interactionData, inputName):

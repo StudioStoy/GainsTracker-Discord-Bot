@@ -1,0 +1,9 @@
+version: '3'
+services:
+  gainstracker-bot:
+    build: ./
+    ports:
+      - "5555:5555"
+    container_name: GainsTrackerBotImage
+    env_file:
+      - stack.env
