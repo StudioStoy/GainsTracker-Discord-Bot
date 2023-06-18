@@ -85,7 +85,8 @@ class GetPBsCommand(BaseCommand):
 
                         match tidyUpString(page.title)[2:].strip():
                             case "reps":
-                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
+                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"]) + \
+                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
@@ -93,15 +94,17 @@ class GetPBsCommand(BaseCommand):
                                 inlineCount += 1
                             case "strength":
                                 pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
-                                     str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
-                                     str(workout["personalBest"]["data"]["Reps"])
+                                    str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
+                                    str(workout["personalBest"]["data"]["Reps"]) + \
+                                    f"\nNotes: {workout['personalBest']['data']['Notes']}"
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
                                 )
                                 inlineCount += 1
                             case "time endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
+                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + \
+                                    f"\nNotes: {workout['personalBest']['data']['Notes']}"
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
@@ -109,8 +112,9 @@ class GetPBsCommand(BaseCommand):
                                 inlineCount += 1
                             case "time and distance endurance":
                                 pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + "\nDistance: " + \
-                                     str(workout["personalBest"]["data"]["Distance"]) + " " + \
-                                     str(workout["personalBest"]["data"]["DistanceUnit"])
+                                    str(workout["personalBest"]["data"]["Distance"]) + " " + \
+                                    str(workout["personalBest"]["data"]["DistanceUnit"]) + \
+                                    f"\nNotes: {workout['personalBest']['data']['Notes']}"
                                 page.add_field(
                                     name=workoutName.capitalize(),
                                     value=f'```{pb}```', inline=True
