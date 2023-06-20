@@ -2,7 +2,7 @@ import discord
 from discord.ui import View, Button
 
 from BaseCommand import BaseCommand
-from Common.Constants import BASE_URL, GAINS_BOT
+from Common.Constants import BASE_URL
 from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
 
 

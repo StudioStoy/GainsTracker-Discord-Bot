@@ -98,7 +98,7 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
                             idiotReason="Bro. Please only log the time in `hours (00:00:00)`, `minutes (00:00)` or `seconds (00)`.",
                             insult="Bro.")
         raise RuntimeError("No incorrect time inputs bro.")
-    elif timeInput == "0":
+    elif int(timeInput) == 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
                             insult="Bro.")

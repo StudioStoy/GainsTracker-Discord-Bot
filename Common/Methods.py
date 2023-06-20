@@ -1,7 +1,7 @@
+import asyncio
 import json
 import re
 
-import asyncio
 import discord
 
 
