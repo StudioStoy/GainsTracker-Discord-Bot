@@ -18,9 +18,9 @@ class GetProgressCommand(BaseCommand):
 
         self.workouts = getDataFromResponse(workoutsResponse)
         logWorkoutView = WorkoutDropDownView(self.workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
-        await self.message.channel.send(view=logWorkoutView)
+        await self.replyToCommand(logWorkoutView)
         # await interaction
 
     async def createNewWorkoutCallback(self, selectedDict, interaction=None):
         await interaction.response.defer()
-        await self.sendMessage("ello :D")
+        await self.replyToCommand("ello :D")

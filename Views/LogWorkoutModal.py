@@ -49,10 +49,15 @@ class LogWorkoutModal(Modal):
                         "DistanceUnit": "Kilometers"
                     }
         except ValueError:
+            await interaction.response.defer()
+
             await interaction.channel.send(
                 "Please make sure you only input numbers or text where applicable, not mixed.")
             await asyncio.sleep(2)
             await interaction.channel.send("You peanut.")
+            return
+
+        # TODO: validate method for the input here
 
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
@@ -64,8 +69,7 @@ class LogWorkoutModal(Modal):
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
 
-        await interaction.channel.send("GAINZZZZZZZZ (success)")
-        await interaction.response.defer()
+        await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
 
 
 def tryAndFindInputFromModal(interactionData, inputName):

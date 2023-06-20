@@ -70,12 +70,13 @@ class GetPBsCommand(BaseCommand):
                 self.pages.append(embed)
 
             inlineCount = 0
-            for workout in workouts:
-                if workout["personalBest"] is None:
-                    continue
+            for page in self.pages:
+                page: discord.Embed
 
-                for page in self.pages:
-                    page: discord.Embed
+                for workout in workouts:
+                    if workout["personalBest"] is None:
+                        continue
+
                     if tidyUpString(categoryFromType(workout['type'])) in page.title:
                         workoutName = tidyUpString(workout["type"])
 
@@ -118,9 +119,9 @@ class GetPBsCommand(BaseCommand):
                                 inlineCount += 1
 
             i = 0
-            await self.message.channel.send(embed=self.pages[i], view=self.getView(self.currentPage))
+            await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
 
         else:
-            await checkStatusCode(response, self.message.channel)
+            await checkStatusCode(response, self.interaction.channel)
 
         return response

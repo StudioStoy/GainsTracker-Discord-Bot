@@ -24,6 +24,8 @@ async def checkStatusCode(response, channel, param=""):
 
 
 def getDataFromResponse(response) -> json:
+    if response.content is None:
+        return None
     return json.loads(response.content)
 
 
