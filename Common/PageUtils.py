@@ -12,15 +12,3 @@ def createBasicPage(title="Gainer time") -> discord.Embed:
     page.set_footer(text="versie 0.4.0")
 
     return page
-
-
-def getEmojiPerCategory(category):
-    match category:
-        case "Strength":
-            return '🏋️'
-        case "Reps":
-            return '💪'
-        case "TimeEndurance":
-            return '⏱'
-        case "TimeAndDistanceEndurance":
-            return '🚀'

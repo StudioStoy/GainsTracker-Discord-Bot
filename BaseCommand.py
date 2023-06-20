@@ -83,7 +83,7 @@ class BaseCommand:
         # Implement this function like the one in the LoginCommand. Like so:
         #   response = session.action
         #   if self.responsePositive(response):
-        #       succes logic
+        #       success logic
         #   else:
         #       checkStatusCode(params) // or something else that raises an exception.
         pass

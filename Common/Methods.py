@@ -56,6 +56,18 @@ def categoryFromType(workoutType: str):
     return types[workoutType]
 
 
+def getEmojiPerCategory(category):
+    match category:
+        case "Strength":
+            return '🏋️'
+        case "Reps":
+            return '💪'
+        case "TimeEndurance":
+            return '⏱'
+        case "TimeAndDistanceEndurance":
+            return '🚀'
+
+
 def tidyUpString(string):
     tidiedString = re.sub(r'(?<![A-Z\W])(?=[A-Z])', ' ', string).lower().lstrip()
     return tidiedString.capitalize()

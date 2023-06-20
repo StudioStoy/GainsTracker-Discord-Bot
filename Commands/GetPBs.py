@@ -3,8 +3,7 @@ from discord.ui import View, Button
 
 from BaseCommand import BaseCommand
 from Common.Constants import BASE_URL, GAINS_BOT
-from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType
-from Views.PageUtils import getEmojiPerCategory
+from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
 
 
 class GetPBsCommand(BaseCommand):
