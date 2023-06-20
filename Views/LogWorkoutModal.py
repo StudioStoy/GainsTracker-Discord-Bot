@@ -32,11 +32,13 @@ class LogWorkoutModal(Modal):
                     data = {
                         "Weight": float(tryAndFindInputFromModal(interaction.data, "weightInput")),
                         "WeightUnit": "Kilograms",
-                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
+                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput")),
+                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "Reps":
                     data = {
-                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
+                        "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput")),
+                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "TimeEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
@@ -44,6 +46,7 @@ class LogWorkoutModal(Modal):
 
                     data = {
                         "Time": timeInput
+                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "TimeAndDistanceEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
@@ -52,7 +55,8 @@ class LogWorkoutModal(Modal):
                     data = {
                         "Time": timeInput,
                         "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
-                        "DistanceUnit": "Kilometers"
+                        "DistanceUnit": "Kilometers",
+                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
         except ValueError:
             await dontBeAnIdiot(interaction=interaction,
@@ -113,6 +117,14 @@ repsInputs = [
         max_length=3,
         required=True,
         style=discord.TextStyle.short
+    ),
+    TextInput(
+        custom_id='notesInput',
+        label="Notes:",
+        placeholder='hell yea brotha',
+        max_length=100,
+        required=False,
+        style=discord.TextStyle.paragraph
     )
 ]
 
@@ -132,6 +144,14 @@ strengthInputs = [
         max_length=3,
         required=True,
         style=discord.TextStyle.short
+    ),
+    TextInput(
+        custom_id='notesInput',
+        label="Notes:",
+        placeholder='hell yea brotha',
+        max_length=100,
+        required=False,
+        style=discord.TextStyle.paragraph
     )
 ]
 
@@ -143,6 +163,14 @@ timeEnduranceInputs = [
         max_length=8,
         required=True,
         style=discord.TextStyle.short
+    ),
+    TextInput(
+        custom_id='notesInput',
+        label="Notes:",
+        placeholder='hell yea brotha',
+        max_length=100,
+        required=False,
+        style=discord.TextStyle.paragraph
     )
 ]
 
@@ -162,6 +190,14 @@ timeAndDistanceEnduranceInputs = [
         max_length=6,
         required=True,
         style=discord.TextStyle.short
+    ),
+    TextInput(
+        custom_id='notesInput',
+        label="Notes:",
+        placeholder='hell yea brotha',
+        max_length=100,
+        required=False,
+        style=discord.TextStyle.paragraph
     )
 ]
 
