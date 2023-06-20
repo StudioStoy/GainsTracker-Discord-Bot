@@ -22,7 +22,7 @@ class WorkoutDropDownView(View):
         for workout in self.workoutOptions:
             try:
                 id = workout["id"]
-            except:
+            except KeyError:
                 id = ""
 
             jsonData = {

@@ -1,3 +1,3 @@
-# GainsTracker-Discord-Bot
+# GainsTracker Discord Bot
 
-Quick Discord bot to interact with the GainsTracker using Discord
+A quick bot to interact with the GainsTracker from within Discord. >muscle emoji here< 

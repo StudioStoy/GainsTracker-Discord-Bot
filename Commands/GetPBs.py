@@ -2,9 +2,8 @@ import discord
 from discord.ui import View, Button
 
 from BaseCommand import BaseCommand
-from Common.Constants import BASE_URL, GAINS_BOT
-from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType
-from Views.PageUtils import getEmojiPerCategory
+from Common.Constants import BASE_URL
+from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
 
 
 class GetPBsCommand(BaseCommand):
@@ -53,9 +52,10 @@ class GetPBsCommand(BaseCommand):
         if self.responsePositive(response):
             workouts = getDataFromResponse(response)
             categories = []
+
             if len(workouts) == 0:
-                await self.sendMessage(f"Add some workouts first gainer! Use {GAINS_BOT} `new workout` "
-                                       "to log your first workout.")
+                await self.replyToCommand(f"Add some workouts first gainer! Use the `/new` command "
+                                          "to log your first workout.")
                 return
 
             for workout in workouts:
@@ -70,12 +70,13 @@ class GetPBsCommand(BaseCommand):
                 self.pages.append(embed)
 
             inlineCount = 0
-            for workout in workouts:
-                if workout["personalBest"] is None:
-                    continue
+            for page in self.pages:
+                page: discord.Embed
 
-                for page in self.pages:
-                    page: discord.Embed
+                for workout in workouts:
+                    if workout["personalBest"] is None:
+                        continue
+
                     if tidyUpString(categoryFromType(workout['type'])) in page.title:
                         workoutName = tidyUpString(workout["type"])
 
@@ -122,9 +123,9 @@ class GetPBsCommand(BaseCommand):
                                 inlineCount += 1
 
             i = 0
-            await self.message.channel.send(embed=self.pages[i], view=self.getView(self.currentPage))
+            await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
 
         else:
-            await checkStatusCode(response, self.message.channel)
+            await checkStatusCode(response, self.interaction.channel)
 
         return response

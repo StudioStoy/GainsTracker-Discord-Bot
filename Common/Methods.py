@@ -1,5 +1,8 @@
+import asyncio
 import json
 import re
+
+import discord
 
 
 async def checkStatusCode(response, channel, param=""):
@@ -24,6 +27,8 @@ async def checkStatusCode(response, channel, param=""):
 
 
 def getDataFromResponse(response) -> json:
+    if response.content is None:
+        return None
     return json.loads(response.content)
 
 
@@ -54,6 +59,24 @@ def categoryFromType(workoutType: str):
     return types[workoutType]
 
 
+def getEmojiPerCategory(category):
+    match category:
+        case "Strength":
+            return '🏋️'
+        case "Reps":
+            return '💪'
+        case "TimeEndurance":
+            return '⏱'
+        case "TimeAndDistanceEndurance":
+            return '🚀'
+
+
 def tidyUpString(string):
     tidiedString = re.sub(r'(?<![A-Z\W])(?=[A-Z])', ' ', string).lower().lstrip()
     return tidiedString.capitalize()
+
+
+async def dontBeAnIdiot(interaction: discord.Interaction, idiotReason: str, insult: str):
+    await interaction.response.send_message(idiotReason, ephemeral=True)
+    await asyncio.sleep(2)
+    await interaction.followup.send(insult, ephemeral=True)

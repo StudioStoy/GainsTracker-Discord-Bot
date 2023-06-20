@@ -1,11 +1,11 @@
-import asyncio
+import re
 
 import discord
 import requests
 from discord.ui import Modal, TextInput
 
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, categoryFromType, tidyUpString
+from Common.Methods import checkStatusCode, categoryFromType, tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import emojiPerCategory
 
 
@@ -41,22 +41,28 @@ class LogWorkoutModal(Modal):
                         "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "TimeEndurance":
+                    timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                    await timeInputValidation(timeInput, interaction)
+
                     data = {
-                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput")),
+                        "Time": timeInput
                         "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "TimeAndDistanceEndurance":
+                    timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                    await timeInputValidation(timeInput, interaction)
+
                     data = {
-                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput")),
+                        "Time": timeInput,
                         "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
                         "DistanceUnit": "Kilometers",
                         "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
         except ValueError:
-            await interaction.channel.send(
-                "Please make sure you only input numbers or text where applicable, not mixed.")
-            await asyncio.sleep(2)
-            await interaction.channel.send("You peanut.")
+            await dontBeAnIdiot(interaction=interaction,
+                                idiotReason="Please make sure you only input numbers or text where applicable, not both at the same time.",
+                                insult="You peanut.")
+            return
 
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
@@ -68,8 +74,7 @@ class LogWorkoutModal(Modal):
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
 
-        await interaction.channel.send("GAINZZZZZZZZ (success)")
-        await interaction.response.defer()
+        await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
 
 
 def tryAndFindInputFromModal(interactionData, inputName):
@@ -77,6 +82,31 @@ def tryAndFindInputFromModal(interactionData, inputName):
         textInput = comp["components"][0]
         if textInput["custom_id"] == inputName:
             return textInput["value"]
+
+
+async def timeInputValidation(timeInput: str, interaction: discord.Interaction = None):
+    pattern = re.compile(r"[0-9]?[0-9]?:?[0-9]?[0-9]?:?[0-9]?[0-9]", re.IGNORECASE)
+    isValid = pattern.match(timeInput)
+
+    if interaction is None:
+        return isValid
+
+    if int(timeInput) < 0:
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="...",
+                            insult="Really?")
+        raise RuntimeError("No incorrect time inputs bro.")
+
+    if not isValid:
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="Bro. Please only log the time in `hours (00:00:00)`, `minutes (00:00)` or `seconds (00)`.",
+                            insult="Bro.")
+        raise RuntimeError("No incorrect time inputs bro.")
+    elif int(timeInput) == 0:
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
+                            insult="Bro.")
+        raise RuntimeError("No incorrect time inputs bro.")
 
 
 repsInputs = [
