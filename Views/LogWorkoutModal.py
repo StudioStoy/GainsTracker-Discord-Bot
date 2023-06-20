@@ -1,11 +1,11 @@
-import asyncio
+import re
 
 import discord
 import requests
 from discord.ui import Modal, TextInput
 
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, categoryFromType, tidyUpString
+from Common.Methods import checkStatusCode, categoryFromType, tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import emojiPerCategory
 
 
@@ -39,25 +39,26 @@ class LogWorkoutModal(Modal):
                         "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput"))
                     }
                 case "TimeEndurance":
+                    timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                    await timeInputValidation(timeInput, interaction)
+
                     data = {
-                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                        "Time": timeInput
                     }
                 case "TimeAndDistanceEndurance":
+                    timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
+                    await timeInputValidation(timeInput, interaction)
+
                     data = {
-                        "Time": str(tryAndFindInputFromModal(interaction.data, "timeInput")),
+                        "Time": timeInput,
                         "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
                         "DistanceUnit": "Kilometers"
                     }
         except ValueError:
-            await interaction.response.defer()
-
-            await interaction.channel.send(
-                "Please make sure you only input numbers or text where applicable, not mixed.")
-            await asyncio.sleep(2)
-            await interaction.channel.send("You peanut.")
+            await dontBeAnIdiot(interaction=interaction,
+                                idiotReason="Please make sure you only input numbers or text where applicable, not both at the same time.",
+                                insult="You peanut.")
             return
-
-        # TODO: validate method for the input here
 
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
@@ -77,6 +78,31 @@ def tryAndFindInputFromModal(interactionData, inputName):
         textInput = comp["components"][0]
         if textInput["custom_id"] == inputName:
             return textInput["value"]
+
+
+async def timeInputValidation(timeInput: str, interaction: discord.Interaction = None):
+    pattern = re.compile(r"[0-9]?[0-9]?:?[0-9]?[0-9]?:?[0-9]?[0-9]", re.IGNORECASE)
+    isValid = pattern.match(timeInput)
+
+    if interaction is None:
+        return isValid
+
+    if int(timeInput) < 0:
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="...",
+                            insult="Really?")
+        raise RuntimeError("No incorrect time inputs bro.")
+
+    if not isValid:
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="Bro. Please only log the time in `hours (00:00:00)`, `minutes (00:00)` or `seconds (00)`.",
+                            insult="Bro.")
+        raise RuntimeError("No incorrect time inputs bro.")
+    elif timeInput == "0":
+        await dontBeAnIdiot(interaction=interaction,
+                            idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
+                            insult="Bro.")
+        raise RuntimeError("No incorrect time inputs bro.")
 
 
 repsInputs = [

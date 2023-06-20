@@ -52,9 +52,10 @@ class GetPBsCommand(BaseCommand):
         if self.responsePositive(response):
             workouts = getDataFromResponse(response)
             categories = []
+
             if len(workouts) == 0:
-                await self.sendMessage(f"Add some workouts first gainer! Use {GAINS_BOT} `new workout` "
-                                       "to log your first workout.")
+                await self.replyToCommand(f"Add some workouts first gainer! Use the `/new` command "
+                                          "to log your first workout.")
                 return
 
             for workout in workouts:

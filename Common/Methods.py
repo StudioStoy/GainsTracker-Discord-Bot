@@ -1,6 +1,9 @@
 import json
 import re
 
+import asyncio
+import discord
+
 
 async def checkStatusCode(response, channel, param=""):
     message = ""
@@ -71,3 +74,9 @@ def getEmojiPerCategory(category):
 def tidyUpString(string):
     tidiedString = re.sub(r'(?<![A-Z\W])(?=[A-Z])', ' ', string).lower().lstrip()
     return tidiedString.capitalize()
+
+
+async def dontBeAnIdiot(interaction: discord.Interaction, idiotReason: str, insult: str):
+    await interaction.response.send_message(idiotReason, ephemeral=True)
+    await asyncio.sleep(2)
+    await interaction.followup.send(insult, ephemeral=True)
