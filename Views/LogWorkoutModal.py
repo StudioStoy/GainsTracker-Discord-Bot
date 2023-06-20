@@ -2,17 +2,18 @@ import re
 
 import discord
 import requests
-from discord.ui import Modal, TextInput
+from discord.ui import Modal
 
 from Common.Constants import BASE_URL
 from Common.Methods import checkStatusCode, categoryFromType, tidyUpString, dontBeAnIdiot
-from Views.WorkoutDropDownView import emojiPerCategory
+from Views.WorkoutDropDownView import getEmojiPerCategory
+from Views.WorkoutInputs import inputsPerCategory
 
 
 class LogWorkoutModal(Modal):
     def __init__(self, selectedWorkoutData, session: requests.Session = None):
         super().__init__(
-            title=f"{emojiPerCategory[categoryFromType(selectedWorkoutData['type'])] + tidyUpString(selectedWorkoutData['type'])}")
+            title=f"{getEmojiPerCategory(categoryFromType(selectedWorkoutData['type'])) + tidyUpString(selectedWorkoutData['type'])}")
 
         self.timeout = None
         self.session = session
@@ -21,11 +22,21 @@ class LogWorkoutModal(Modal):
         self.on_submit = self.submitDataCallback
 
     def createInputFields(self, workoutData: dict):
-        for textInput in inputsPerCategory[categoryFromType(workoutData['type'])]:
+        category = categoryFromType(workoutData['type'])
+
+        for textInput in inputsPerCategory[category]:
+            textInput: discord.ui.TextInput
+
+            # TODO: Create better way to set placeholders for specific workout types.
+            if textInput.custom_id == "generalInput" and workoutData['type'] == "Bouldering":
+                textInput.placeholder = '5a+'
+                textInput.max_length = 3
+                textInput.style = discord.TextStyle.short
+
             self.add_item(textInput)
 
     async def submitDataCallback(self, interaction: discord.Interaction):
-        data = {}
+        data: dict = {}
         try:
             match categoryFromType(self.workoutData["type"]):
                 case "Strength":
@@ -33,20 +44,17 @@ class LogWorkoutModal(Modal):
                         "Weight": float(tryAndFindInputFromModal(interaction.data, "weightInput")),
                         "WeightUnit": "Kilograms",
                         "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput")),
-                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "Reps":
                     data = {
                         "Reps": int(tryAndFindInputFromModal(interaction.data, "repsInput")),
-                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
                 case "TimeEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
                     await timeInputValidation(timeInput, interaction)
 
                     data = {
-                        "Time": timeInput
-                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
+                        "Time": timeInput,
                     }
                 case "TimeAndDistanceEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
@@ -56,8 +64,12 @@ class LogWorkoutModal(Modal):
                         "Time": timeInput,
                         "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
                         "DistanceUnit": "Kilometers",
-                        "Notes": str(tryAndFindInputFromModal(interaction.data, "notesInput"))
                     }
+                case "General":
+                    data = {
+                        "GeneralAchievement": str(tryAndFindInputFromModal(interaction.data, "generalInput")),
+                    }
+            data["Notes"] = str(tryAndFindInputFromModal(interaction.data, "notesInput"))
         except ValueError:
             await dontBeAnIdiot(interaction=interaction,
                                 idiotReason="Please make sure you only input numbers or text where applicable, not both at the same time.",
@@ -71,6 +83,7 @@ class LogWorkoutModal(Modal):
 
         response = self.session.post(url=f"{BASE_URL}/gains/workout/{self.workoutData['id']}/measurement",
                                      json=requestData)
+
         if not response.status_code == 204 or not response.status_code == 200:
             await checkStatusCode(response, interaction.channel)
 
@@ -107,103 +120,3 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
                             idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
                             insult="Bro.")
         raise RuntimeError("No incorrect time inputs bro.")
-
-
-repsInputs = [
-    TextInput(
-        custom_id='repsInput',
-        label="Amount of reps:",
-        placeholder='0',
-        max_length=3,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='notesInput',
-        label="Notes:",
-        placeholder='hell yea brotha',
-        max_length=100,
-        required=False,
-        style=discord.TextStyle.paragraph
-    )
-]
-
-strengthInputs = [
-    TextInput(
-        custom_id='weightInput',
-        label="Amount of weight in kg:",
-        placeholder='0',
-        max_length=3,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='repsInput',
-        label="Amount of reps:",
-        placeholder='0',
-        max_length=3,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='notesInput',
-        label="Notes:",
-        placeholder='hell yea brotha',
-        max_length=100,
-        required=False,
-        style=discord.TextStyle.paragraph
-    )
-]
-
-timeEnduranceInputs = [
-    TextInput(
-        custom_id='timeInput',
-        label="Time:",
-        placeholder='00:00:00',
-        max_length=8,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='notesInput',
-        label="Notes:",
-        placeholder='hell yea brotha',
-        max_length=100,
-        required=False,
-        style=discord.TextStyle.paragraph
-    )
-]
-
-timeAndDistanceEnduranceInputs = [
-    TextInput(
-        custom_id='timeInput',
-        label="Time:",
-        placeholder='00:00:00',
-        max_length=8,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='distanceInput',
-        label="Distance in km:",
-        placeholder='0',
-        max_length=6,
-        required=True,
-        style=discord.TextStyle.short
-    ),
-    TextInput(
-        custom_id='notesInput',
-        label="Notes:",
-        placeholder='hell yea brotha',
-        max_length=100,
-        required=False,
-        style=discord.TextStyle.paragraph
-    )
-]
-
-inputsPerCategory = {
-    "Reps": repsInputs,
-    "Strength": strengthInputs,
-    "TimeAndDistanceEndurance": timeAndDistanceEnduranceInputs,
-    "TimeEndurance": timeEnduranceInputs
-}

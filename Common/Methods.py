@@ -32,6 +32,7 @@ def getDataFromResponse(response) -> json:
     return json.loads(response.content)
 
 
+# TODO: Move this method to the backend API probably, as now the maintainability is abysmal here.
 def categoryFromType(workoutType: str):
     types = {
         'Squat': 'Strength',
@@ -54,7 +55,8 @@ def categoryFromType(workoutType: str):
         'JumpingRope': 'TimeEndurance',
         'Walking': 'TimeAndDistanceEndurance',
         'Running': 'TimeAndDistanceEndurance',
-        'Cycling': 'TimeAndDistanceEndurance'
+        'Cycling': 'TimeAndDistanceEndurance',
+        'Bouldering': 'General'
     }
     return types[workoutType]
 
@@ -69,6 +71,8 @@ def getEmojiPerCategory(category):
             return '⏱'
         case "TimeAndDistanceEndurance":
             return '🚀'
+        case "General":
+            return '💫'
 
 
 def tidyUpString(string):
