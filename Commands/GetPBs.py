@@ -84,51 +84,32 @@ class GetPBsCommand(BaseCommand):
                             page.add_field(name='', value='', inline=False)
                             inlineCount = 0
 
+                        pb = ""
                         match tidyUpString(page.title)[2:].strip():
                             case "reps":
-                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"]) + \
-                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                                inlineCount += 1
+                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
                             case "strength":
                                 pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
                                      str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
-                                     str(workout["personalBest"]["data"]["Reps"]) + \
-                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                                inlineCount += 1
+                                     str(workout["personalBest"]["data"]["Reps"])
                             case "time endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + \
-                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                                inlineCount += 1
+                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
                             case "time and distance endurance":
                                 pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + "\nDistance: " + \
                                      str(workout["personalBest"]["data"]["Distance"]) + " " + \
-                                     str(workout["personalBest"]["data"]["DistanceUnit"]) + \
-                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                                inlineCount += 1
+                                     str(workout["personalBest"]["data"]["DistanceUnit"])
                             case "general":
-                                pb = "achievement: " + str(workout["personalBest"]["data"]["GeneralAchievement"]) + \
-                                     f"\nNotes: {workout['personalBest']['data']['Notes']}"
-                                page.add_field(
-                                    name=workoutName.capitalize(),
-                                    value=f'```{pb}```', inline=True
-                                )
-                                inlineCount += 1
+                                pb = "achievement: " + str(workout["personalBest"]["data"]["GeneralAchievement"])
+
+                        notes = workout['personalBest']['data']['Notes']
+                        if notes != "":
+                            pb += f"\nNotes: {notes}"
+
+                        page.add_field(
+                            name=workoutName.capitalize(),
+                            value=f'```{pb}```', inline=True
+                        )
+                        inlineCount += 1
 
             i = 0
             await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
