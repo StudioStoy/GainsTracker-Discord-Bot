@@ -74,7 +74,7 @@ class LogWorkoutModal(Modal):
             await dontBeAnIdiot(interaction=interaction,
                                 idiotReason="Please make sure you only input numbers or text where applicable, not both at the same time.",
                                 insult="You peanut.")
-            return
+            raise RuntimeError
 
         requestData = {
             "category": categoryFromType(self.workoutData["type"]),
