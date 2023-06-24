@@ -28,7 +28,7 @@ class LogNewWorkoutCommand(BaseCommand):
         await self.replyToCommand(logWorkoutView)
 
     async def createNewWorkoutCallback(self, selectedDict, interaction: discord.Interaction = None):
-        session = await self.get_session(interaction)
+        session = await self.get_session()
 
         response = session.post(f"{BASE_URL}/gains/workout", json={"workoutType": selectedDict["type"]})
         selectedDict["id"] = getDataFromResponse(response)

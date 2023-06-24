@@ -7,12 +7,12 @@ from Common.Constants import BASE_URL
 
 
 async def login(userId: int, interaction: discord.Interaction):
-    loginPayload = {
-        "userHandle": userIdAndName[userId],
-        "password": os.getenv('EPIC_PASS')
-    }
-
     try:
+        loginPayload = {
+            "userHandle": userIdAndName[userId],
+            "password": os.getenv('EPIC_PASS')
+        }
+
         response = requests.post(f"{BASE_URL}/auth/login", json=loginPayload)
         if not response.status_code == 204 and not response.status_code == 200:
             await interaction.channel.send("Could not authenticate user.")
