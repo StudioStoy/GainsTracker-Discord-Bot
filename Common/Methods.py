@@ -29,7 +29,14 @@ async def checkStatusCode(response, channel, param=""):
 def getDataFromResponse(response) -> json:
     if response.content is None:
         return None
-    return json.loads(response.content)
+
+    try:
+        return json.loads(response.content)
+    except json.decoder.JSONDecodeError:
+        # Sometimes, he say no. Meaning: even though it is pretty valid json, it cannot decode it starting with "b'".
+        if str(response.content).startswith("b'"):
+            return str(response.content).removeprefix("b'").removesuffix("'")
+        # Otherwise, there's no hope for this man.
 
 
 # TODO: Move this method to the backend API probably, as now the maintainability is abysmal here.

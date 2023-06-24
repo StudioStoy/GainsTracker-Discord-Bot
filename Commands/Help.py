@@ -1,6 +1,6 @@
 import discord
 
-from BaseCommand import BaseCommand
+from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import GAINS_VERSION
 
 
@@ -15,14 +15,14 @@ embed = discord.Embed(title="Help menu", description="A list of possible command
     .set_author(name="Website: Studio Stoy", url="https://www.studiostoy.nl") \
     .set_footer(text=f"Version {GAINS_VERSION}")
 
-logNewWorkoutExample = '''new workout'''
+logNewWorkoutExample = '''/new'''
 embed.add_field(name="- **Add new workout**\n_Select a new workout from the available workouts._",
                 value=f'```json\n{logNewWorkoutExample}\n```', inline=False)
 
-logWorkoutExample = '''log'''
+logWorkoutExample = '''/log'''
 embed.add_field(name="- **Log data to workout**\n_Log a new measurement for an existing workout_",
                 value=f'```json\n{logWorkoutExample}\n```', inline=False)
 
-pbExample = '''pbs'''
+pbExample = '''/pbs'''
 embed.add_field(name="- **Personal Bests** \n_Get a list of all workouts per category with your PBs._",
                 value=f'```json\n{pbExample}\n```', inline=False)

@@ -1,13 +1,15 @@
 import discord
 from discord.ui import View, Button
 
-from BaseCommand import BaseCommand
+from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
 from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
 
 
 class GetPBsCommand(BaseCommand):
     def __init__(self):
+        super().__init__()
+
         self.pages = []
         self.currentPage = 0
 
@@ -48,7 +50,9 @@ class GetPBsCommand(BaseCommand):
         await interaction.response.defer()  # Even if the compiler thinks it doesn't exist, .defer() does.
 
     async def execute(self):
-        response = self.session.get(f"{BASE_URL}/gains/workout")
+        session = await self.get_session()
+        response = session.get(url=f"{BASE_URL}/gains/workout")
+
         if self.responsePositive(response):
             workouts = getDataFromResponse(response)
             categories = []

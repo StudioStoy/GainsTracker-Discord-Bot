@@ -1,55 +1,63 @@
+import datetime
 from abc import abstractmethod
 from logging import Logger
+from datetime import datetime, timedelta
 
 import discord
 import requests
 
-from Commands.Login import LoginCommand
+from Infrastructure.Login import login
 from Common.Methods import getDataFromResponse
+from Infrastructure.SessionStuff import sessions
 
 
-# noinspection PyUnresolvedReferences
 class BaseCommand:
-    message: discord.Message = None
-    session: requests.Session = requests.session()
-    interaction: discord.Interaction = None
     logger: Logger
-    userTokensInSession = {}
+
+    async def get_session(self, userId: int = None) -> requests.Session:
+        user_id = self.interaction.user.id if userId is None else userId
+        if user_id not in sessions:
+            sessions[user_id] = await self.create_session(user_id, self.interaction)
+
+        #     sessions[user_id] = {
+        #         "token": await self.create_session(user_id, self.interaction),
+        #         "startTime": datetime.now().strftime('%H:%M:%S')
+        #     }
+        #
+        # if sessions[user_id]["startTime"] < (datetime.now() + timedelta(hours=9)).strftime('%H:%M:%S'):
+        #     sessions[user_id] = {
+        #         "token": await self.create_session(user_id, self.interaction),
+        #         "startTime": datetime.now().strftime('%H:%M:%S')
+        #     }
+
+        return sessions[user_id]
+
+    async def create_session(self, user_id, interaction):
+        # NOTE: I hate the word sesh
+        sesh = requests.session()
+        sesh.headers = {
+            'Content-type': 'application/json',
+            "accept": "application/json",
+        }
+
+        response = await login(user_id, interaction)
+        sesh.headers["Authorization"] = getDataFromResponse(response)
+
+        return sesh
 
     @classmethod
-    def setSession(cls, session):
-        cls.session = session
-
-    @classmethod
-    def setLogger(cls, logger):
-        cls.logger = logger
-
-    @classmethod
-    async def initialize(cls, interaction):
+    async def initialize(cls, interaction, logger):
         cls.interaction = interaction
-
-        userId = cls.interaction.user.id
-
-        if userId not in cls.userTokensInSession:
-            login = LoginCommand(userId, interaction, session=cls.session)
-            response = await login.execute()
-            cls.userTokensInSession[userId] = getDataFromResponse(response)
-
-        if cls.userTokensInSession.__contains__(userId):
-            cls.session.headers["Authorization"] = cls.userTokensInSession[userId]
-
-    @classmethod
-    def setMessage(cls, messageInstance):
-        cls.message = messageInstance
+        cls.logger = logger
 
     async def sendMessage(self, message, view=None):
         if type(message) == discord.Embed:
             if view is not None:
-                return await self.message.channel.send(embed=message, view=view)
-            return await self.message.channel.send(embed=message)
+                return await message.channel.send(embed=message, view=view)
+            return await message.channel.send(embed=message)
         if view is not None:
-            return await self.message.channel.send(message, view=view)
-        return await self.message.channel.send(message)
+            return await message.channel.send(message, view=view)
+        return await message.channel.send(message)
 
     # Checks the type(s) of the given argument(s) and uses the corresponding method to send the message to the user.
     async def replyToCommand(self, message=None, staticInteraction=None, view=None, userOnly=True):

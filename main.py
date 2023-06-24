@@ -2,10 +2,8 @@ import logging
 import os
 
 import discord
-import requests
 from dotenv import load_dotenv
 
-from BaseCommand import BaseCommand
 from Commands.GetPBs import GetPBsCommand
 from Commands.GetProgress import GetProgressCommand
 from Commands.Help import HelpCommand
@@ -29,12 +27,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = GainsTrackerClient(intents=intents)
 
-session = requests.session()
-session.headers = {
-    'Content-type': 'application/json',
-    "accept": "application/json",
-}
-
 
 # Startup of the bot.
 @client.event
@@ -45,8 +37,6 @@ async def on_ready():
     client.loop.create_task(changeStatus(client))
     logger.info("[INFO] Created 'changing bot status' loop")
 
-    BaseCommand.setSession(session)
-    BaseCommand.setLogger(logger)
     logger.info("[INFO] Initialized BaseCommand with session and logger")
 
     logger.info("[INFO] Ready!")
@@ -55,40 +45,40 @@ async def on_ready():
 @client.tree.command()
 async def help(interaction: discord.Interaction):
     """Get an epic helpmenu!"""
-    await BaseCommand.initialize(interaction)
     helpMenu = HelpCommand()
+    await helpMenu.initialize(interaction, logger)
     await helpMenu.execute()
 
 
 @client.tree.command()
 async def new(interaction: discord.Interaction):
     """Log a new workout!"""
-    await BaseCommand.initialize(interaction)
     addWorkout = LogNewWorkoutCommand()
+    await addWorkout.initialize(interaction, logger)
     await addWorkout.execute()
 
 
 @client.tree.command()
 async def log(interaction: discord.Interaction):
     """Log a measurement of an existing workout!"""
-    await BaseCommand.initialize(interaction)
     logWorkout = LogWorkoutCommand()
+    await logWorkout.initialize(interaction, logger)
     await logWorkout.execute()
 
 
 @client.tree.command()
 async def progress(interaction: discord.Interaction):
     """Get your progress of a specific workout!"""
-    await BaseCommand.initialize(interaction)
     getProgress = GetProgressCommand()
+    await getProgress.initialize(interaction, logger)
     await getProgress.execute()
 
 
 @client.tree.command()
 async def pbs(interaction: discord.Interaction):
     """Get all your PB's!"""
-    await BaseCommand.initialize(interaction)
     getPBs = GetPBsCommand()
+    await getPBs.initialize(interaction, logger)
     await getPBs.execute()
 
 

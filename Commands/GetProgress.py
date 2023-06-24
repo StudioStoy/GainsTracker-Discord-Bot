@@ -1,4 +1,4 @@
-from BaseCommand import BaseCommand
+from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
 from Common.Methods import checkStatusCode, getDataFromResponse
 from Views.WorkoutDropDownView import WorkoutDropDownView
@@ -7,6 +7,7 @@ from Views.WorkoutDropDownView import WorkoutDropDownView
 class GetProgressCommand(BaseCommand):
 
     def __init__(self):
+        super().__init__()
         self.workouts = []
 
     async def execute(self):

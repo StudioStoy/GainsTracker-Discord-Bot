@@ -29,6 +29,7 @@ class LogWorkoutModal(Modal):
 
             # TODO: Create better way to set placeholders for specific workout types.
             if textInput.custom_id == "generalInput" and workoutData['type'] == "Bouldering":
+                textInput.label = "Boulder level"
                 textInput.placeholder = '5a+'
                 textInput.max_length = 3
                 textInput.style = discord.TextStyle.short
