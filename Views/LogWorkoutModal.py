@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 import discord
 import requests
@@ -105,7 +106,7 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
     if interaction is None:
         return isValid
 
-    if int(timeInput) < 0:
+    if totalSecondsFromTime(timeInput) < 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="...",
                             insult="Really?")
@@ -116,8 +117,19 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
                             idiotReason="Bro. Please only log the time in `hours (00:00:00)`, `minutes (00:00)` or `seconds (00)`.",
                             insult="Bro.")
         raise RuntimeError("No incorrect time inputs bro.")
-    elif int(timeInput) == 0:
+    elif totalSecondsFromTime(timeInput) == 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
-                            insult="Bro.")
+                            insult="Go do a little more bro.")
         raise RuntimeError("No incorrect time inputs bro.")
+
+
+def totalSecondsFromTime(time):
+    # yup this is great code, amazing even
+    if time.isdigit() or (time.startswith('-') and time[1:].isdigit()):
+        return int(time)
+
+    time_format = "%H:%M:%S" if time.count(':') == 2 else "%H:%M"
+    time_object = datetime.strptime(time, time_format)
+    total_seconds = (time_object.hour * 3600) + (time_object.minute * 60) + time_object.second
+    return total_seconds

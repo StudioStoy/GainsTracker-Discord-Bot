@@ -9,6 +9,9 @@ from Views.WorkoutDropDownView import WorkoutDropDownView
 
 # This command, "/log", is for existing workouts. The command "/new" is for workouts that haven't been added yet.
 class LogWorkoutCommand(BaseCommand):
+    def __init__(self, interaction, logger):
+        super().__init__(interaction, logger)
+
     async def execute(self):
         session = await self.get_session()
         workoutsResponse = session.get(f"{BASE_URL}/gains/workout")

@@ -10,13 +10,15 @@ from Infrastructure.SessionStuff import sessions
 
 
 class BaseCommand:
-    logger: Logger
+    def __init__(self, interaction: discord.Interaction, logger: Logger):
+        self.logger = logger
+        self.interaction = interaction
 
     async def get_session(self, userId: int = None) -> requests.Session:
         user_id = self.interaction.user.id if userId is None else userId
 
         if user_id not in sessions:
-            sessions[user_id] = await self.create_session(user_id, self.interaction)
+            sessions[user_id] = await self.create_session(user_id)
 
         #     sessions[user_id] = {
         #         "token": await self.create_session(user_id, self.interaction),
@@ -31,7 +33,7 @@ class BaseCommand:
 
         return sessions[user_id]
 
-    async def create_session(self, user_id, interaction):
+    async def create_session(self, user_id):
         # NOTE: I hate the word sesh
         sesh = requests.session()
         sesh.headers = {
@@ -39,15 +41,10 @@ class BaseCommand:
             "accept": "application/json",
         }
 
-        response = await login(user_id, interaction)
+        response = await login(user_id, self.interaction)
         sesh.headers["Authorization"] = getDataFromResponse(response)
 
         return sesh
-
-    @classmethod
-    async def initialize(cls, interaction, logger):
-        cls.interaction = interaction
-        cls.logger = logger
 
     async def sendMessage(self, message, view=None):
         if type(message) == discord.Embed:
@@ -59,6 +56,7 @@ class BaseCommand:
         return await message.channel.send(message)
 
     # Checks the type(s) of the given argument(s) and uses the corresponding method to send the message to the user.
+    # noinspection PyUnresolvedReferences
     async def replyToCommand(self, message=None, staticInteraction=None, view=None, userOnly=True):
         interaction = staticInteraction if staticInteraction is not None else self.interaction
 

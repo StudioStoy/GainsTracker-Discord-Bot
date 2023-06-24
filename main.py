@@ -53,32 +53,28 @@ async def help(interaction: discord.Interaction):
 @client.tree.command()
 async def new(interaction: discord.Interaction):
     """Log a new workout!"""
-    addWorkout = LogNewWorkoutCommand()
-    await addWorkout.initialize(interaction, logger)
+    addWorkout = LogNewWorkoutCommand(interaction, logger)
     await addWorkout.execute()
 
 
 @client.tree.command()
 async def log(interaction: discord.Interaction):
     """Log a measurement of an existing workout!"""
-    logWorkout = LogWorkoutCommand()
-    await logWorkout.initialize(interaction, logger)
+    logWorkout = LogWorkoutCommand(interaction, logger)
     await logWorkout.execute()
 
 
 @client.tree.command()
 async def progress(interaction: discord.Interaction):
     """Get your progress of a specific workout!"""
-    getProgress = GetProgressCommand()
-    await getProgress.initialize(interaction, logger)
+    getProgress = GetProgressCommand(interaction, logger)
     await getProgress.execute()
 
 
 @client.tree.command()
 async def pbs(interaction: discord.Interaction):
     """Get all your PB's!"""
-    getPBs = GetPBsCommand()
-    await getPBs.initialize(interaction, logger)
+    getPBs = GetPBsCommand(interaction, logger)
     await getPBs.execute()
 
 

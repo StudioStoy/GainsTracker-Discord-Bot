@@ -21,6 +21,8 @@ async def checkStatusCode(response, interaction: discord.Interaction, param=""):
             message = f"{param} not found."
         case 409:
             message = f"Conflict: {param} already exists/was already added."
+        case 500:
+            message = "Something went wrong, my bad g"
         case _:
             return
 

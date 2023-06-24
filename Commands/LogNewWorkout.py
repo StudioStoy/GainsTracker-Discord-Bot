@@ -8,8 +8,8 @@ from Views.WorkoutDropDownView import WorkoutDropDownView
 
 
 class LogNewWorkoutCommand(BaseCommand):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, interaction, logger):
+        super().__init__(interaction, logger)
         self.workouts = []
 
     async def execute(self):

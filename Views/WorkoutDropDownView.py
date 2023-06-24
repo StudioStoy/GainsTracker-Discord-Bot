@@ -42,8 +42,7 @@ class WorkoutDropDownView(View):
             selectionDictionary = json.loads(select.values[0])
 
             if self.mutateSelectedWorkoutCallback is None:
-                await interaction.message.channel.send(
-                    f"epic i like the {selectionDictionary['type']} too :sunglasses:")
+                await interaction.message.channel.send(f"epic i like {selectionDictionary['type']} too :sunglasses:")
                 await interaction.response.defer()
             else:
                 await self.mutateSelectedWorkoutCallback(selectedDict=selectionDictionary, interaction=interaction)

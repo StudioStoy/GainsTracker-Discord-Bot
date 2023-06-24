@@ -7,8 +7,8 @@ from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, c
 
 
 class GetPBsCommand(BaseCommand):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, interaction, logger):
+        super().__init__(interaction, logger)
 
         self.pages = []
         self.currentPage = 0
