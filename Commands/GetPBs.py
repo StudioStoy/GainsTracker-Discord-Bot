@@ -119,6 +119,7 @@ class GetPBsCommand(BaseCommand):
             await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
 
         else:
-            await checkStatusCode(response, self.interaction.channel)
+
+            await checkStatusCode(response, self.interaction)
 
         return response

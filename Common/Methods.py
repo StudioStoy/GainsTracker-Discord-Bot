@@ -4,14 +4,17 @@ import re
 
 import discord
 
+from Infrastructure.Login import login
 
-async def checkStatusCode(response, channel, param=""):
+
+async def checkStatusCode(response, interaction: discord.Interaction, param=""):
     message = ""
     match response.status_code:
         case 400:
             message = "Ai Caramba that's a bad request if I ever saw one."
         case 401:
-            message = "Could not authenticate user."
+            await interaction.response.defer()
+            await login(interaction.user.id, interaction)
         case 403:
             message = f"User {param} not authorized for this action."
         case 404:
@@ -22,7 +25,7 @@ async def checkStatusCode(response, channel, param=""):
             return
 
     if message != "":
-        await channel.send(message)
+        await interaction.channel.send(message)
         raise Exception
 
 

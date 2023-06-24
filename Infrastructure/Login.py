@@ -4,7 +4,6 @@ import discord
 import requests
 
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode
 
 
 async def login(userId: int, interaction: discord.Interaction):
@@ -16,7 +15,7 @@ async def login(userId: int, interaction: discord.Interaction):
     try:
         response = requests.post(f"{BASE_URL}/auth/login", json=loginPayload)
         if not response.status_code == 204 and not response.status_code == 200:
-            await checkStatusCode(response, interaction.channel, userIdAndName[userId])
+            await interaction.channel.send("Could not authenticate user.")
 
         return response
     except requests.exceptions.RequestException as e:

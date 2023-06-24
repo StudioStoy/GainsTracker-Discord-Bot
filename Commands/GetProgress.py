@@ -11,10 +11,11 @@ class GetProgressCommand(BaseCommand):
         self.workouts = []
 
     async def execute(self):
-        workoutsResponse = self.session.get(f"{BASE_URL}/catalog/workout")
+        session = await self.get_session()
+        workoutsResponse = session.get(f"{BASE_URL}/catalog/workout")
 
         if not self.responsePositive(workoutsResponse):
-            await checkStatusCode(workoutsResponse, self.message.channel)
+            await checkStatusCode(workoutsResponse, interaction=self.interaction)
             return
 
         self.workouts = getDataFromResponse(workoutsResponse)

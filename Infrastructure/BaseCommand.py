@@ -1,7 +1,5 @@
-import datetime
 from abc import abstractmethod
 from logging import Logger
-from datetime import datetime, timedelta
 
 import discord
 import requests
@@ -16,6 +14,7 @@ class BaseCommand:
 
     async def get_session(self, userId: int = None) -> requests.Session:
         user_id = self.interaction.user.id if userId is None else userId
+
         if user_id not in sessions:
             sessions[user_id] = await self.create_session(user_id, self.interaction)
 

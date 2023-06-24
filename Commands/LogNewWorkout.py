@@ -17,7 +17,7 @@ class LogNewWorkoutCommand(BaseCommand):
         workoutsResponse = session.get(f"{BASE_URL}/catalog/workout")
 
         if not self.responsePositive(workoutsResponse):
-            await checkStatusCode(workoutsResponse, self.interaction.channel)
+            await checkStatusCode(workoutsResponse, self.interaction)
             return
 
         self.workouts = getDataFromResponse(workoutsResponse)
@@ -45,4 +45,4 @@ class LogNewWorkoutCommand(BaseCommand):
                                           staticInteraction=interaction)
                 raise RuntimeError
             else:
-                await checkStatusCode(response, self.interaction.channel)
+                await checkStatusCode(response, self.interaction)

@@ -86,7 +86,7 @@ class LogWorkoutModal(Modal):
                                      json=requestData)
 
         if not response.status_code == 204 or not response.status_code == 200:
-            await checkStatusCode(response, interaction.channel)
+            await checkStatusCode(response, interaction)
 
         await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
 

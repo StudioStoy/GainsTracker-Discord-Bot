@@ -14,7 +14,7 @@ class LogWorkoutCommand(BaseCommand):
         workoutsResponse = session.get(f"{BASE_URL}/gains/workout")
 
         if not self.responsePositive(workoutsResponse):
-            await checkStatusCode(workoutsResponse, self.interaction.channel)
+            await checkStatusCode(workoutsResponse, self.interaction)
 
         workouts = getDataFromResponse(workoutsResponse)
         if len(workouts) <= 0:
