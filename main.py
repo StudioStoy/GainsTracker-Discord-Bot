@@ -45,8 +45,7 @@ async def on_ready():
 @client.tree.command()
 async def help(interaction: discord.Interaction):
     """Get an epic helpmenu!"""
-    helpMenu = HelpCommand()
-    await helpMenu.initialize(interaction, logger)
+    helpMenu = HelpCommand(interaction, logger)
     await helpMenu.execute()
 
 

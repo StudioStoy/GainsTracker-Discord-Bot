@@ -105,7 +105,7 @@ class GetPBsCommand(BaseCommand):
                             case "general":
                                 pb = "achievement: " + str(workout["personalBest"]["data"]["GeneralAchievement"])
 
-                        notes = workout['personalBest']['data']['Notes']
+                        notes = workout['personalBest']['notes']
                         if notes != "":
                             pb += f"\nNotes: {notes}"
 

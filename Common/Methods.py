@@ -3,11 +3,12 @@ import json
 import re
 
 import discord
+import requests
 
 from Infrastructure.Login import login
 
 
-async def checkStatusCode(response, interaction: discord.Interaction, param=""):
+async def checkStatusCode(response: requests.Response, interaction: discord.Interaction, param=""):
     message = ""
     match response.status_code:
         case 400:
@@ -25,6 +26,8 @@ async def checkStatusCode(response, interaction: discord.Interaction, param=""):
             message = "Something went wrong, my bad g"
         case _:
             return
+
+    print(f"[WARNING]: {response.content}")
 
     if message != "":
         await interaction.channel.send(message)
