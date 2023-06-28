@@ -1,7 +1,8 @@
-version: '3'
+version: '3.7'
 services:
   gainstracker-bot:
     build: ./
+    pull_policy: build
     ports:
       - "5555:5555"
     container_name: GainsTrackerBotImage
