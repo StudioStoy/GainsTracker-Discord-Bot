@@ -46,6 +46,7 @@ async def on_ready():
 async def help(interaction: discord.Interaction):
     """Get an epic helpmenu!"""
     helpMenu = HelpCommand(interaction, logger)
+    logger.info("[INFO] Executing help command!")
     await helpMenu.execute()
 
 
@@ -53,6 +54,7 @@ async def help(interaction: discord.Interaction):
 async def new(interaction: discord.Interaction):
     """Log a new workout!"""
     addWorkout = LogNewWorkoutCommand(interaction, logger)
+    logger.info("[INFO] Executing new command!")
     await addWorkout.execute()
 
 
@@ -60,6 +62,7 @@ async def new(interaction: discord.Interaction):
 async def log(interaction: discord.Interaction):
     """Log a measurement of an existing workout!"""
     logWorkout = LogWorkoutCommand(interaction, logger)
+    logger.info("[INFO] Executing log command!")
     await logWorkout.execute()
 
 
@@ -67,6 +70,7 @@ async def log(interaction: discord.Interaction):
 async def progress(interaction: discord.Interaction):
     """Get your progress of a specific workout!"""
     getProgress = GetProgressCommand(interaction, logger)
+    logger.info("[INFO] Executing progress command!")
     await getProgress.execute()
 
 
@@ -74,6 +78,7 @@ async def progress(interaction: discord.Interaction):
 async def pbs(interaction: discord.Interaction):
     """Get all your PB's!"""
     getPBs = GetPBsCommand(interaction, logger)
+    logger.info("[INFO] Executing pbs command!")
     await getPBs.execute()
 
 

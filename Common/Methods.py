@@ -30,6 +30,7 @@ async def checkStatusCode(response: requests.Response, interaction: discord.Inte
     print(f"[WARNING]: {response.content}")
 
     if message != "":
+        print(f"something went wrong. response: {response.status_code}")
         await interaction.channel.send(message)
         raise Exception
 
