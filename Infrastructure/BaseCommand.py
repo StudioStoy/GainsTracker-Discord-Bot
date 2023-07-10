@@ -1,3 +1,4 @@
+import logging
 from abc import abstractmethod
 from logging import Logger
 
@@ -7,6 +8,9 @@ import requests
 from Infrastructure.Login import login
 from Common.Methods import getDataFromResponse
 from Infrastructure.SessionStuff import sessions
+
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class BaseCommand:
@@ -59,6 +63,8 @@ class BaseCommand:
     # noinspection PyUnresolvedReferences
     async def replyToCommand(self, message=None, staticInteraction=None, view=None, userOnly=True):
         interaction = staticInteraction if staticInteraction is not None else self.interaction
+
+        logger.info("Replying to command.")
 
         try:
             if isinstance(message, discord.ui.Modal):

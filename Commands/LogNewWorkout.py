@@ -24,6 +24,7 @@ class LogNewWorkoutCommand(BaseCommand):
         if len(self.workouts) <= 0:
             await self.replyToCommand("You have added ALL workouts! Are you making sure you have correct form??")
 
+        self.logger.info("Creating workout drop down.")
         logWorkoutView = WorkoutDropDownView(self.workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
         await self.replyToCommand(logWorkoutView)
 

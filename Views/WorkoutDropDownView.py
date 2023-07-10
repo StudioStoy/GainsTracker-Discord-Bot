@@ -1,4 +1,5 @@
 import json
+import logging
 
 import discord
 from discord import SelectOption
@@ -6,6 +7,9 @@ from discord.ui import Select
 from discord.ui import View
 
 from Common.Methods import categoryFromType, tidyUpString, getEmojiPerCategory
+
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class WorkoutDropDownView(View):
@@ -46,6 +50,8 @@ class WorkoutDropDownView(View):
                 await interaction.response.defer()
             else:
                 await self.mutateSelectedWorkoutCallback(selectedDict=selectionDictionary, interaction=interaction)
+
+        logger.info("Selection created.")
 
         select.callback = dropDownSelectCallback
         return select

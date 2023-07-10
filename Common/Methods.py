@@ -1,3 +1,5 @@
+import logging
+
 import asyncio
 import json
 import re
@@ -7,9 +9,13 @@ import requests
 
 from Infrastructure.Login import login
 
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 
 async def checkStatusCode(response: requests.Response, interaction: discord.Interaction, param=""):
     message = ""
+    logger.warning(f"Something went wrong. Status code: {response.status_code}")
     match response.status_code:
         case 400:
             message = "Ai Caramba that's a bad request if I ever saw one."

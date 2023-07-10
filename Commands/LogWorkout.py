@@ -24,6 +24,7 @@ class LogWorkoutCommand(BaseCommand):
             await self.replyToCommand(f"You have no workouts yet! Use the `/new` command to set a new workout.")
             return
 
+        self.logger.info("Creating workout drop down.")
         logWorkoutView = WorkoutDropDownView(workouts, mutateWorkoutCallback=self.workoutSelectCallback)
         await self.replyToCommand(logWorkoutView)
 

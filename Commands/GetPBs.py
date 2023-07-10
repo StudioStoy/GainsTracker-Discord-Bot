@@ -46,7 +46,6 @@ class GetPBsCommand(BaseCommand):
                 self.currentPage = len(self.pages) - 1
 
         await interaction.message.edit(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
-
         await interaction.response.defer()  # Even if the compiler thinks it doesn't exist, .defer() does.
 
     async def execute(self):
@@ -54,6 +53,8 @@ class GetPBsCommand(BaseCommand):
         response = session.get(url=f"{BASE_URL}/gains/workout")
 
         if self.responsePositive(response):
+            self.logger.info("Retrieved user's workouts.")
+
             workouts = getDataFromResponse(response)
             categories = []
 
@@ -114,12 +115,13 @@ class GetPBsCommand(BaseCommand):
                             value=f'```{pb}```', inline=True
                         )
                         inlineCount += 1
-
             i = 0
+
+            self.logger.info("Created pages.")
+
             await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
 
         else:
-
             await checkStatusCode(response, self.interaction)
 
         return response
