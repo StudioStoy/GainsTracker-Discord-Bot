@@ -6,7 +6,7 @@ repsInputs = [
         custom_id='repsInput',
         label="Amount of reps:",
         placeholder='0',
-        max_length=3,
+        max_length=8,
         required=True,
         style=discord.TextStyle.short
     ),
@@ -25,7 +25,7 @@ strengthInputs = [
         custom_id='weightInput',
         label="Amount of weight in km (use dots as comma's):",
         placeholder='0',
-        max_length=3,
+        max_length=8,
         required=True,
         style=discord.TextStyle.short
     ),
@@ -33,7 +33,7 @@ strengthInputs = [
         custom_id='repsInput',
         label="Amount of reps:",
         placeholder='0',
-        max_length=3,
+        max_length=10,
         required=True,
         style=discord.TextStyle.short
     ),
@@ -79,7 +79,7 @@ timeAndDistanceEnduranceInputs = [
         custom_id='distanceInput',
         label="Distance in km (use dots as comma's):",
         placeholder='0',
-        max_length=6,
+        max_length=8,
         required=True,
         style=discord.TextStyle.short
     ),
