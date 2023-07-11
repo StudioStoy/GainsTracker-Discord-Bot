@@ -23,7 +23,7 @@ repsInputs = [
 strengthInputs = [
     TextInput(
         custom_id='weightInput',
-        label="Amount of weight in kg:",
+        label="Amount of weight in km (use dots as comma's):",
         placeholder='0',
         max_length=3,
         required=True,
@@ -77,7 +77,7 @@ timeAndDistanceEnduranceInputs = [
     ),
     TextInput(
         custom_id='distanceInput',
-        label="Distance in km:",
+        label="Distance in km (use dots as comma's):",
         placeholder='0',
         max_length=6,
         required=True,
