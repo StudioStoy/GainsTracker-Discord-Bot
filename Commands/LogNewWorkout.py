@@ -1,35 +1,40 @@
+import logging
+
 import discord
 
 from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, getDataFromResponse
+from Common.Methods import getDataFromResponse
 from Views.LogWorkoutModal import LogWorkoutModal
 from Views.WorkoutDropDownView import WorkoutDropDownView
 
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 
 class LogNewWorkoutCommand(BaseCommand):
-    def __init__(self, interaction, logger):
-        super().__init__(interaction, logger)
+    def __init__(self, interaction):
+        super().__init__(interaction)
         self.workouts = []
 
     async def execute(self):
-        session = await self.get_session()
+        session = await self.sessionCenter.get_session()
         workoutsResponse = session.get(f"{BASE_URL}/catalog/workout")
 
         if not self.responsePositive(workoutsResponse):
-            await checkStatusCode(workoutsResponse, self.interaction)
+            await self.checkStatusCode(workoutsResponse)
             return
 
         self.workouts = getDataFromResponse(workoutsResponse)
         if len(self.workouts) <= 0:
             await self.replyToCommand("You have added ALL workouts! Are you making sure you have correct form??")
 
-        self.logger.info("Creating workout drop down.")
+        logger.info("Creating workout drop down.")
         logWorkoutView = WorkoutDropDownView(self.workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
         await self.replyToCommand(logWorkoutView)
 
     async def createNewWorkoutCallback(self, selectedDict, interaction: discord.Interaction = None):
-        session = await self.get_session()
+        session = await self.sessionCenter.get_session()
 
         response = session.post(f"{BASE_URL}/gains/workout", json={"workoutType": selectedDict["type"]})
         selectedDict["id"] = getDataFromResponse(response)
@@ -46,4 +51,4 @@ class LogNewWorkoutCommand(BaseCommand):
                                           staticInteraction=interaction)
                 raise RuntimeError
             else:
-                await checkStatusCode(response, self.interaction)
+                await self.checkStatusCode(response)

@@ -1,14 +1,19 @@
+import logging
+
 import discord
 from discord.ui import View, Button
 
 from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
+from Common.Methods import getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
+
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class GetPBsCommand(BaseCommand):
-    def __init__(self, interaction, logger):
-        super().__init__(interaction, logger)
+    def __init__(self, interaction):
+        super().__init__(interaction)
 
         self.pages = []
         self.currentPage = 0
@@ -49,11 +54,11 @@ class GetPBsCommand(BaseCommand):
         await interaction.response.defer()  # Even if the compiler thinks it doesn't exist, .defer() does.
 
     async def execute(self):
-        session = await self.get_session()
+        session = await self.sessionCenter.get_session()
         response = session.get(url=f"{BASE_URL}/gains/workout")
 
         if self.responsePositive(response):
-            self.logger.info("Retrieved user's workouts.")
+            logger.info("Retrieved user's workouts.")
 
             workouts = getDataFromResponse(response)
             categories = []
@@ -117,11 +122,11 @@ class GetPBsCommand(BaseCommand):
                         inlineCount += 1
             i = 0
 
-            self.logger.info("Created pages.")
+            logger.info("Created pages.")
 
             await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
 
         else:
-            await checkStatusCode(response, self.interaction)
+            await self.checkStatusCode(response)
 
         return response

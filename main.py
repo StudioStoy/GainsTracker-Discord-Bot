@@ -45,7 +45,7 @@ async def on_ready():
 @client.tree.command()
 async def help(interaction: discord.Interaction):
     """Get an epic helpmenu!"""
-    helpMenu = HelpCommand(interaction, logger)
+    helpMenu = HelpCommand(interaction)
     logger.info("[INFO] Executing help command!")
     await helpMenu.execute()
 
@@ -53,7 +53,7 @@ async def help(interaction: discord.Interaction):
 @client.tree.command()
 async def new(interaction: discord.Interaction):
     """Log a new workout!"""
-    addWorkout = LogNewWorkoutCommand(interaction, logger)
+    addWorkout = LogNewWorkoutCommand(interaction)
     logger.info("[INFO] Executing new command!")
     await addWorkout.execute()
 
@@ -61,7 +61,7 @@ async def new(interaction: discord.Interaction):
 @client.tree.command()
 async def log(interaction: discord.Interaction):
     """Log a measurement of an existing workout!"""
-    logWorkout = LogWorkoutCommand(interaction, logger)
+    logWorkout = LogWorkoutCommand(interaction)
     logger.info("[INFO] Executing log command!")
     await logWorkout.execute()
 
@@ -69,7 +69,7 @@ async def log(interaction: discord.Interaction):
 @client.tree.command()
 async def progress(interaction: discord.Interaction):
     """Get your progress of a specific workout!"""
-    getProgress = GetProgressCommand(interaction, logger)
+    getProgress = GetProgressCommand(interaction)
     logger.info("[INFO] Executing progress command!")
     await getProgress.execute()
 
@@ -77,7 +77,7 @@ async def progress(interaction: discord.Interaction):
 @client.tree.command()
 async def pbs(interaction: discord.Interaction):
     """Get all your PB's!"""
-    getPBs = GetPBsCommand(interaction, logger)
+    getPBs = GetPBsCommand(interaction)
     logger.info("[INFO] Executing pbs command!")
     await getPBs.execute()
 

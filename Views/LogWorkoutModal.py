@@ -6,7 +6,7 @@ import requests
 from discord.ui import Modal
 
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, categoryFromType, tidyUpString, dontBeAnIdiot
+from Common.Methods import categoryFromType, tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import getEmojiPerCategory
 from Views.WorkoutInputs import inputsPerCategory
 
@@ -86,10 +86,12 @@ class LogWorkoutModal(Modal):
         response = self.session.post(url=f"{BASE_URL}/gains/workout/{self.workoutData['id']}/measurement",
                                      json=requestData)
 
-        if not response.status_code == 204 or not response.status_code == 200:
-            await checkStatusCode(response, interaction)
+        # TODO: some form of validation of the response
 
-        await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
+        if response.status_code == 200 or response.status_code == 204:
+            await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
+        else:
+            await interaction.response.send_message("Oopsie daisy something went wrong. Try again later bro.", ephemeral=True)
 
 
 def tryAndFindInputFromModal(interactionData, inputName):

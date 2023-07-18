@@ -1,44 +1,11 @@
-import logging
-
 import asyncio
 import json
+import logging
 import re
-
 import discord
-import requests
-
-from Infrastructure.Login import login
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(message)s')
-
-
-async def checkStatusCode(response: requests.Response, interaction: discord.Interaction, param=""):
-    message = ""
-    logger.warning(f"Something went wrong. Status code: {response.status_code}")
-    match response.status_code:
-        case 400:
-            message = "Ai Caramba that's a bad request if I ever saw one."
-        case 401:
-            await interaction.response.defer()
-            await login(interaction.user.id, interaction)
-        case 403:
-            message = f"User {param} not authorized for this action."
-        case 404:
-            message = f"{param} not found."
-        case 409:
-            message = f"Conflict: {param} already exists/was already added."
-        case 500:
-            message = "Something went wrong, my bad g"
-        case _:
-            return
-
-    print(f"[WARNING]: {response.content}")
-
-    if message != "":
-        print(f"something went wrong. response: {response.status_code}")
-        await interaction.channel.send(message)
-        raise Exception
 
 
 def getDataFromResponse(response) -> json:

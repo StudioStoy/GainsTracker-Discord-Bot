@@ -1,63 +1,19 @@
 import logging
 from abc import abstractmethod
-from logging import Logger
 
 import discord
 import requests
 
-from Infrastructure.Login import login
-from Common.Methods import getDataFromResponse
-from Infrastructure.SessionStuff import sessions
+from Infrastructure.SessionCenter import SessionCenter
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class BaseCommand:
-    def __init__(self, interaction: discord.Interaction, logger: Logger):
-        self.logger = logger
+    def __init__(self, interaction: discord.Interaction):
         self.interaction = interaction
-
-    async def get_session(self, userId: int = None) -> requests.Session:
-        user_id = self.interaction.user.id if userId is None else userId
-
-        if user_id not in sessions:
-            sessions[user_id] = await self.create_session(user_id)
-
-        #     sessions[user_id] = {
-        #         "token": await self.create_session(user_id, self.interaction),
-        #         "startTime": datetime.now().strftime('%H:%M:%S')
-        #     }
-        #
-        # if sessions[user_id]["startTime"] < (datetime.now() + timedelta(hours=9)).strftime('%H:%M:%S'):
-        #     sessions[user_id] = {
-        #         "token": await self.create_session(user_id, self.interaction),
-        #         "startTime": datetime.now().strftime('%H:%M:%S')
-        #     }
-
-        return sessions[user_id]
-
-    async def create_session(self, user_id):
-        # NOTE: I hate the word sesh
-        sesh = requests.session()
-        sesh.headers = {
-            'Content-type': 'application/json',
-            "accept": "application/json",
-        }
-
-        response = await login(user_id, self.interaction)
-        sesh.headers["Authorization"] = getDataFromResponse(response)
-
-        return sesh
-
-    async def sendMessage(self, message, view=None):
-        if type(message) == discord.Embed:
-            if view is not None:
-                return await message.channel.send(embed=message, view=view)
-            return await message.channel.send(embed=message)
-        if view is not None:
-            return await message.channel.send(message, view=view)
-        return await message.channel.send(message)
+        self.sessionCenter = SessionCenter(interaction=interaction)
 
     # Checks the type(s) of the given argument(s) and uses the corresponding method to send the message to the user.
     # noinspection PyUnresolvedReferences
@@ -83,7 +39,7 @@ class BaseCommand:
 
             return await interaction.response.send_message(message, ephemeral=userOnly)
         except discord.errors.InteractionResponded:
-            self.logger.warning("[WARNING] Already responded to interaction.")
+            logger.warning("[WARNING] Already responded to interaction.")
 
     @staticmethod
     def responsePositive(response):
@@ -96,5 +52,34 @@ class BaseCommand:
         #   if self.responsePositive(response):
         #       success logic
         #   else:
-        #       checkStatusCode(params) // or something else that raises an exception.
+        #       self.checkStatusCode(params) // or something else that raises an exception.
         pass
+
+    async def checkStatusCode(self, response: requests.Response, param=""):
+        message = ""
+        logger.warning(f"Something went wrong. Status code: {response.status_code}")
+
+        match response.status_code:
+            case 400:
+                message = "Ai Caramba that's a bad request if I ever saw one."
+            case 401:
+                logger.info(f"Trying to refresh token...")
+                await self.interaction.response.defer()
+                await self.sessionCenter.login(userId=self.interaction.user.id)
+            case 403:
+                message = f"User {param} not authorized for this action."
+            case 404:
+                message = f"{param} not found."
+            case 409:
+                message = f"Conflict: {param} already exists/was already added."
+            case 500:
+                message = "Something went wrong, my bad g"
+            case _:
+                return
+
+        logger.warning(f"[WARNING]: {response.content}")
+
+        if message != "":
+            print(f"something went wrong. response: {response.status_code}")
+            await self.interaction.channel.send(message)
+            raise Exception

@@ -1,21 +1,26 @@
+import logging
+
 from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import BASE_URL
-from Common.Methods import checkStatusCode, getDataFromResponse
+from Common.Methods import getDataFromResponse
 from Views.WorkoutDropDownView import WorkoutDropDownView
+
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class GetProgressCommand(BaseCommand):
 
-    def __init__(self, interaction, logger):
-        super().__init__(interaction, logger)
+    def __init__(self, interaction):
+        super().__init__(interaction)
         self.workouts = []
 
     async def execute(self):
-        session = await self.get_session()
+        session = await self.sessionCenter.get_session()
         workoutsResponse = session.get(f"{BASE_URL}/catalog/workout")
 
         if not self.responsePositive(workoutsResponse):
-            await checkStatusCode(workoutsResponse, interaction=self.interaction)
+            await self.checkStatusCode(workoutsResponse)
             return
 
         self.workouts = getDataFromResponse(workoutsResponse)
