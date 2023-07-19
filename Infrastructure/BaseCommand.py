@@ -63,9 +63,8 @@ class BaseCommand:
             case 400:
                 message = "Ai Caramba that's a bad request if I ever saw one."
             case 401:
-                logger.info(f"Trying to refresh token...")
-                await self.interaction.response.defer()
-                await self.sessionCenter.login(userId=self.interaction.user.id)
+                logger.info(f"401 response. Might be expired token.")
+                await self.sessionCenter.refreshToken(user_id=self.interaction.user.id)
             case 403:
                 message = f"User {param} not authorized for this action."
             case 404:

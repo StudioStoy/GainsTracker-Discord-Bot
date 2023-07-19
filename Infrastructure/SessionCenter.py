@@ -1,3 +1,4 @@
+import logging
 import os
 
 import discord
@@ -5,6 +6,9 @@ import requests
 
 from Common.Constants import BASE_URL
 from Common.Methods import getDataFromResponse
+
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 sessions = {}  # This list is static for the whole runtime of the app.
 userIdAndName = {
@@ -23,11 +27,8 @@ class SessionCenter:
     def __init__(self, interaction: discord.Interaction):
         self.interaction = interaction
 
-    async def get_session(self, userId: int = None, refresh=False) -> requests.Session:
+    async def get_session(self, userId: int = None) -> requests.Session:
         user_id = self.interaction.user.id if userId is None else userId
-
-        if refresh:
-            sessions[user_id] = await self.create_session(user_id)
 
         if user_id not in sessions:
             sessions[user_id] = await self.create_session(user_id)
@@ -43,6 +44,11 @@ class SessionCenter:
         }
 
         response = await self.login(user_id)
+
+        if response.status_code != 200 or response.status_code != 204:
+            self.interaction.response.send_message("Cannot authenticate user. Bro.")
+            logger.error(f"Session cannot be created for user {user_id}.")
+
         sesh.headers["Authorization"] = getDataFromResponse(response)
 
         return sesh
@@ -62,3 +68,8 @@ class SessionCenter:
         except requests.exceptions.RequestException as e:
             await self.interaction.followup.send("**Darn**, could not connect to the server.", ephemeral=True)
             raise RuntimeError
+
+    async def refreshToken(self, user_id):
+        logger.info(f"Trying to refresh token...")
+
+        sessions[user_id] = await self.create_session(user_id)
