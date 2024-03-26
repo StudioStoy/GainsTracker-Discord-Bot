@@ -6,7 +6,7 @@ import discord
 import requests
 from discord.ui import Modal
 
-from Common.Constants import BASE_URL
+from Common.Constants import GAINS_URL
 from Common.Methods import categoryFromType, tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import getEmojiPerCategory
 from Views.WorkoutInputs import inputsPerCategory
@@ -86,7 +86,7 @@ class LogWorkoutModal(Modal):
             "data": data
         }
 
-        response = self.session.post(url=f"{BASE_URL}/gains/workout/{self.workoutData['id']}/measurement",
+        response = self.session.post(url=f"{GAINS_URL}/gains/workout/{self.workoutData['id']}/measurement",
                                      json=requestData)
 
         # TODO: some form of validation of the response

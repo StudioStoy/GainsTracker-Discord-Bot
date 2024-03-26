@@ -4,7 +4,7 @@ import discord
 from discord.ui import View, Button
 
 from Infrastructure.BaseCommand import BaseCommand
-from Common.Constants import BASE_URL
+from Common.Constants import GAINS_URL
 from Common.Methods import getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
 
 logger = logging.getLogger()
@@ -12,11 +12,12 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class GetPBsCommand(BaseCommand):
-    def __init__(self, interaction):
+    def __init__(self, interaction, share):
         super().__init__(interaction)
 
         self.pages = []
         self.currentPage = 0
+        self.share = share
 
     def getView(self, pagePosition):
         buttons = [
@@ -51,11 +52,11 @@ class GetPBsCommand(BaseCommand):
                 self.currentPage = len(self.pages) - 1
 
         await interaction.message.edit(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
-        await interaction.response.defer()  # Even if the compiler thinks it doesn't exist, .defer() does.
+        await interaction.response.defer()  # Silly compiler, .defer() does exist.
 
     async def execute(self):
         session = await self.sessionCenter.get_session()
-        response = session.get(url=f"{BASE_URL}/gains/workout")
+        response = session.get(url=f"{GAINS_URL}/gains/workout")
 
         if self.responsePositive(response):
             logger.info("Retrieved user's workouts.")
@@ -124,7 +125,7 @@ class GetPBsCommand(BaseCommand):
 
             logger.info("Created pages.")
 
-            await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=False)
+            await self.replyToCommand(self.pages[i], view=self.getView(self.currentPage), userOnly=not self.share)
 
         else:
             await self.checkStatusCode(response)

@@ -1,7 +1,7 @@
 import logging
 
 from Infrastructure.BaseCommand import BaseCommand
-from Common.Constants import BASE_URL
+from Common.Constants import GAINS_URL
 from Common.Methods import getDataFromResponse
 from Views.WorkoutDropDownView import WorkoutDropDownView
 
@@ -17,7 +17,7 @@ class GetProgressCommand(BaseCommand):
 
     async def execute(self):
         session = await self.sessionCenter.get_session()
-        workoutsResponse = session.get(f"{BASE_URL}/catalog/workout")
+        workoutsResponse = session.get(f"{GAINS_URL}/catalog/workout")
 
         if not self.responsePositive(workoutsResponse):
             await self.checkStatusCode(workoutsResponse)

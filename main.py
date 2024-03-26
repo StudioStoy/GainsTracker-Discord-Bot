@@ -2,6 +2,7 @@ import logging
 import os
 
 import discord
+from discord import app_commands
 from dotenv import load_dotenv
 
 from Commands.GetPBs import GetPBsCommand
@@ -75,9 +76,18 @@ async def progress(interaction: discord.Interaction):
 
 
 @client.tree.command()
-async def pbs(interaction: discord.Interaction):
+@app_commands.choices(share=[
+    app_commands.Choice(name="Yes", value="Yes"),
+    app_commands.Choice(name="No", value="No"),
+    ])
+async def pbs(interaction: discord.Interaction, share: app_commands.Choice[str] = "No"):
     """Get all your PB's!"""
-    getPBs = GetPBsCommand(interaction)
+    if isinstance(share, str):
+        shouldShare = share == "Yes"
+    else:
+        shouldShare = share.value == "Yes"
+
+    getPBs = GetPBsCommand(interaction, share=shouldShare)
     logger.info("[INFO] Executing pbs command!")
     await getPBs.execute()
 
