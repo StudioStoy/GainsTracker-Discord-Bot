@@ -63,8 +63,6 @@ class SessionCenter:
                 "password": os.getenv('EPIC_PASS')
             }
 
-            logger.info(f"GAINS_URL: {GAINS_URL}")
-
             response = requests.post(f"{GAINS_URL}/auth/login", json=loginPayload)
             if not response.status_code == 204 and not response.status_code == 200:
                 await self.interaction.response.send_message("Could not authenticate user.", ephemeral=True)
