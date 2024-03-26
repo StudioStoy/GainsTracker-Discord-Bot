@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 
@@ -10,6 +11,8 @@ from Common.Methods import categoryFromType, tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import getEmojiPerCategory
 from Views.WorkoutInputs import inputsPerCategory
 
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 class LogWorkoutModal(Modal):
     def __init__(self, selectedWorkoutData, session: requests.Session = None):
@@ -131,7 +134,14 @@ def totalSecondsFromTime(time):
     if time.isdigit() or (time.startswith('-') and time[1:].isdigit()):
         return int(time)
 
-    time_format = "%H:%M:%S" if time.count(':') == 2 else "%H:%M"
+    if time.count(':') == 2:
+        time_format = "%H:%M:%S"
+    elif time.count(':') == 1:
+        time_format = "%M:%S"
+    else:
+        time_format = "%S"
+
     time_object = datetime.strptime(time, time_format)
     total_seconds = (time_object.hour * 3600) + (time_object.minute * 60) + time_object.second
+    logger.info(f"total seconds: {total_seconds}")
     return total_seconds

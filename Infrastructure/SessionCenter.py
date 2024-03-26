@@ -19,7 +19,10 @@ userIdAndName = {
     689447242842898456: "eef",
     722046797270220880: "jordt",
     388157910238101514: "sanda",
-    323484846955692032: "naoh"
+    323484846955692032: "naoh",
+    260796157880434708: "dyllo",
+    108248158512885760: "arv",
+    324907773408182272: "japser"
 }
 
 
@@ -46,7 +49,7 @@ class SessionCenter:
         response = await self.login(user_id)
 
         if response.status_code != 200 or response.status_code != 204:
-            self.interaction.response.send_message("Cannot authenticate user. Bro.")
+            await self.interaction.response.send_message("I was just finishing my set.. Please try again. Bro.", ephemeral=True)
             logger.error(f"Session cannot be created for user {user_id}.")
 
         sesh.headers["Authorization"] = getDataFromResponse(response)
@@ -62,7 +65,7 @@ class SessionCenter:
 
             response = requests.post(f"{BASE_URL}/auth/login", json=loginPayload)
             if not response.status_code == 204 and not response.status_code == 200:
-                await self.interaction.channel.send("Could not authenticate user.")
+                await self.interaction.response.send_message("Could not authenticate user.", ephemeral=True)
 
             return response
         except requests.exceptions.RequestException as e:

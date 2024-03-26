@@ -50,7 +50,7 @@ strengthInputs = [
 timeEnduranceInputs = [
     TextInput(
         custom_id='timeInput',
-        label="Time:",
+        label="Time (`9`, `1:05` or `23:30` is also valid):",
         placeholder='00:00:00',
         max_length=8,
         required=True,
@@ -69,7 +69,7 @@ timeEnduranceInputs = [
 timeAndDistanceEnduranceInputs = [
     TextInput(
         custom_id='timeInput',
-        label="Time:",
+        label="Time (`9`, `1:05` or `23:30` is also valid):",
         placeholder='00:00:00',
         max_length=8,
         required=True,
