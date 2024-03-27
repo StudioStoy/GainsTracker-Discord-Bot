@@ -31,12 +31,13 @@ class LogWorkoutModal(Modal):
         for textInput in inputsPerCategory[category]:
             textInput: discord.ui.TextInput
 
-            # TODO: Create better way to set placeholders for specific workout types.
-            if textInput.custom_id == "generalInput" and workoutData['type'] == "Bouldering":
-                textInput.label = "Boulder level"
-                textInput.placeholder = '5a+'
-                textInput.max_length = 3
-                textInput.style = discord.TextStyle.short
+            if textInput.custom_id == "generalInput":
+                match workoutData['type']:
+                    case "Bouldering":
+                        textInput.label = "Boulder level"
+                        textInput.placeholder = '5a+'
+                        textInput.max_length = 3
+                        textInput.style = discord.TextStyle.short
 
             self.add_item(textInput)
 
@@ -92,7 +93,7 @@ class LogWorkoutModal(Modal):
         # TODO: some form of validation of the response
 
         if response.status_code == 200 or response.status_code == 204:
-            await interaction.response.send_message("GAINZZZZZZZZ (successfully added)", ephemeral=True)
+            await interaction.response.send_message("GAINS💪 (successfully added)", ephemeral=True)
         else:
             await interaction.response.send_message("Oopsie daisy something went wrong. Try again later bro.", ephemeral=True)
 

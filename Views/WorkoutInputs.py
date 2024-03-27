@@ -13,7 +13,7 @@ repsInputs = [
     TextInput(
         custom_id='notesInput',
         label="Notes:",
-        placeholder='hell yea brotha',
+        placeholder='Hell yeah bro',
         max_length=100,
         required=False,
         style=discord.TextStyle.paragraph
@@ -23,7 +23,7 @@ repsInputs = [
 strengthInputs = [
     TextInput(
         custom_id='weightInput',
-        label="Amount of weight in km (use dots as comma's):",
+        label="Amount of weight in kg (use dots as comma's):",
         placeholder='0',
         max_length=8,
         required=True,
@@ -40,7 +40,7 @@ strengthInputs = [
     TextInput(
         custom_id='notesInput',
         label="Notes:",
-        placeholder='hell yea brotha',
+        placeholder='Hell yeah bro',
         max_length=100,
         required=False,
         style=discord.TextStyle.paragraph
@@ -59,7 +59,7 @@ timeEnduranceInputs = [
     TextInput(
         custom_id='notesInput',
         label="Notes:",
-        placeholder='hell yea brotha',
+        placeholder='Hell yeah bro',
         max_length=100,
         required=False,
         style=discord.TextStyle.paragraph
@@ -86,7 +86,7 @@ timeAndDistanceEnduranceInputs = [
     TextInput(
         custom_id='notesInput',
         label="Notes:",
-        placeholder='hell yea brotha',
+        placeholder='Hell yeah bro',
         max_length=100,
         required=False,
         style=discord.TextStyle.paragraph
@@ -105,7 +105,7 @@ generalInputs = [
     TextInput(
         custom_id='notesInput',
         label="Notes:",
-        placeholder='hell yea brotha',
+        placeholder='Hell yeah bro',
         max_length=100,
         required=False,
         style=discord.TextStyle.paragraph
