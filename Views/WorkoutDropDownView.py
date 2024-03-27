@@ -22,8 +22,14 @@ class WorkoutDropDownView(View):
     def createWorkoutSelect(self):
         selectOptions = []
 
+        logger.info(f"Options amount: {len(self.workoutOptions)}")
         optionCount = 0
         for workout in self.workoutOptions:
+            # Because of Discord limitation, only 25 options can show in the select view.
+            # So here I filter out less important ones.
+            if workout["type"] in ["DeadLift", "DiamondPushUp", "JumpingRope", "ChestPress", "DumbbellPress"]:
+                continue
+
             try:
                 workoutId = workout["id"]
             except KeyError:

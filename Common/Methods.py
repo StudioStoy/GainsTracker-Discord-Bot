@@ -24,7 +24,7 @@ def getDataFromResponse(response) -> json:
 # TODO: Move this method to the backend API probably, as now the maintainability is abysmal here.
 def categoryFromType(workoutType: str):
     types = {
-        'Squat': 'Strength',
+        'WeightedSquat': 'Strength',
         'Abduction': 'Strength',
         'Adduction': 'Strength',
         'BenchPress': 'Strength',
@@ -33,7 +33,8 @@ def categoryFromType(workoutType: str):
         'LegPress': 'Strength',
         'ShoulderPress': 'Strength',
         'DumbbellPress': 'Strength',
-        'DumbbellCurl': 'Strength',
+        'BicepCurl': 'Strength',
+        'ChestPress': 'Strength',
         'LatPullDown': 'Strength',
         'BicepPullDown': 'Strength',
         'PectoralFly': 'Strength',
@@ -44,6 +45,7 @@ def categoryFromType(workoutType: str):
         'WidePullUp': 'Reps',
         'DiamondPushUp': 'Reps',
         'ClosePushUp': 'Reps',
+        'BodySquat': 'Reps',
         'WidePushUp': 'Reps',
         'Planking': 'TimeEndurance',
         'JumpingJacks': 'TimeEndurance',
@@ -51,6 +53,8 @@ def categoryFromType(workoutType: str):
         'Walking': 'TimeAndDistanceEndurance',
         'Running': 'TimeAndDistanceEndurance',
         'Cycling': 'TimeAndDistanceEndurance',
+        'Swimming': 'TimeAndDistanceEndurance',
+        'Rowing': 'TimeAndDistanceEndurance',
         'Bouldering': 'General'
     }
     return types[workoutType]

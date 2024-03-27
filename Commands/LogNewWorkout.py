@@ -30,6 +30,7 @@ class LogNewWorkoutCommand(BaseCommand):
             await self.replyToCommand("You have added ALL workouts! Are you making sure you have correct form??")
 
         logger.info("Creating workout drop down.")
+
         logWorkoutView = WorkoutDropDownView(self.workouts, mutateWorkoutCallback=self.createNewWorkoutCallback)
         await self.replyToCommand(logWorkoutView)
 
