@@ -2,6 +2,7 @@ version: '3.7'
 services:
   gainstracker-bot:
     build: ./
+    restart: unless-stopped
     pull_policy: build
     ports:
       - "5555:5555"
