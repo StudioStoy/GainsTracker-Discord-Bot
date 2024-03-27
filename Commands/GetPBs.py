@@ -51,8 +51,8 @@ class GetPBsCommand(BaseCommand):
             case "nav_last":
                 self.currentPage = len(self.pages) - 1
 
-        await interaction.message.edit(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
         await interaction.response.defer()  # Silly compiler, .defer() does exist.
+        await interaction.edit_original_response(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
 
     async def execute(self):
         session = await self.sessionCenter.get_session()
