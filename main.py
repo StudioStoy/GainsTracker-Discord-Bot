@@ -67,12 +67,13 @@ async def log(interaction: discord.Interaction):
     await logWorkout.execute()
 
 
-@client.tree.command()
-async def progress(interaction: discord.Interaction):
-    """Get your progress of a specific workout!"""
-    getProgress = GetProgressCommand(interaction)
-    logger.info("[INFO] Executing progress command!")
-    await getProgress.execute()
+# TODO: progress command.
+# @client.tree.command()
+# async def progress(interaction: discord.Interaction):
+#     """Get your progress of a specific workout!"""
+#     getProgress = GetProgressCommand(interaction)
+#     logger.info("[INFO] Executing progress command!")
+#     await getProgress.execute()
 
 
 @client.tree.command()
