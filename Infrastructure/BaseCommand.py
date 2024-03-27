@@ -72,7 +72,7 @@ class BaseCommand:
             case 409:
                 message = f"Conflict: {param} already exists/was already added."
             case 500:
-                message = "Something went wrong, my bad g"
+                message = "Something went wrong, my bad bro."
             case _:
                 return
 
@@ -80,5 +80,5 @@ class BaseCommand:
 
         if message != "":
             print(f"something went wrong. response: {response.status_code}")
-            await self.interaction.channel.send(message)
+            await self.replyToCommand(message, userOnly=True)
             raise Exception
