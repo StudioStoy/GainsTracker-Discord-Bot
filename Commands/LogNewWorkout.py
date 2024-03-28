@@ -13,11 +13,16 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 class LogNewWorkoutCommand(BaseCommand):
-    def __init__(self, interaction):
+    def __init__(self, interaction, workoutSearchName: str):
         super().__init__(interaction)
+        self.workoutSearchName = workoutSearchName
         self.workouts = []
 
     async def execute(self):
+        if self.workoutSearchName != "":
+            await self.createNewWorkoutCallback({"t": self.workoutSearchName}, self.interaction)
+            return
+
         session = await self.sessionCenter.get_session()
         workoutsResponse = session.get(f"{GAINS_URL}/catalog/workout")
 
@@ -38,6 +43,7 @@ class LogNewWorkoutCommand(BaseCommand):
         session = await self.sessionCenter.get_session()
 
         response = session.post(f"{GAINS_URL}/gains/workout", json={"workoutType": selectedDict["t"]})
+        await self.checkStatusCode(response=response, param=selectedDict["t"])
         selectedDict["i"] = getDataFromResponse(response)["id"]
         selectedDict["c"] = getDataFromResponse(response)["category"]
 

@@ -6,12 +6,13 @@ from discord import app_commands
 from dotenv import load_dotenv
 
 from Commands.GetPBs import GetPBsCommand
-from Commands.GetProgress import GetProgressCommand
 from Commands.Help import HelpCommand
 from Commands.LogNewWorkout import LogNewWorkoutCommand
 from Commands.LogWorkout import LogWorkoutCommand
 from Common.Constants import GAINS_VERSION
 from GainsTrackerClient import GainsTrackerClient
+from Infrastructure.autocomplete import new_workout_select_autocomplete, existing_workout_select_autocomplete, \
+    clear_cached_workout_lists
 from Routines.ChangeStatus import changeStatus
 
 # Initialize logging.
@@ -22,12 +23,12 @@ logger.info('INFO: initializing GainsTrackerBot')
 # Initialize environment.
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+GUILDS = str(os.getenv('GUILDS')).split(",")
 
 # Set intents (permissions).
 intents = discord.Intents.default()
 intents.message_content = True
-client = GainsTrackerClient(intents=intents)
-
+client = GainsTrackerClient(intents=intents, guild_ids=GUILDS)
 
 # Startup of the bot.
 @client.event
@@ -35,36 +36,50 @@ async def on_ready():
     logger.info(f"[INFO] Client logged in as {client.user}")
     logger.info(f"[INFO] Version {GAINS_VERSION}")
 
+    logger.info("[INFO] Initialized BaseCommand with session and logger")
+
     client.loop.create_task(changeStatus(client))
     logger.info("[INFO] Created 'changing bot status' loop")
-
-    logger.info("[INFO] Initialized BaseCommand with session and logger")
 
     logger.info("[INFO] Ready!")
 
 
-@client.tree.command()
+@client.tree.command(description="Get an epic helpmenu! 🏅")
 async def help(interaction: discord.Interaction):
-    """Get an epic helpmenu!"""
     helpMenu = HelpCommand(interaction)
     logger.info("[INFO] Executing help command!")
     await helpMenu.execute()
 
 
-@client.tree.command()
-async def new(interaction: discord.Interaction):
-    """Log a new workout!"""
-    addWorkout = LogNewWorkoutCommand(interaction)
+@client.tree.command(description="Log a new workout! 💪")
+@app_commands.autocomplete(workout=new_workout_select_autocomplete)
+async def new(interaction: discord.Interaction, workout: str = ""):
+    addWorkout = LogNewWorkoutCommand(interaction, workout)
     logger.info("[INFO] Executing new command!")
     await addWorkout.execute()
+    clear_cached_workout_lists()
 
 
-@client.tree.command()
-async def log(interaction: discord.Interaction):
-    """Log a measurement of an existing workout!"""
-    logWorkout = LogWorkoutCommand(interaction)
+@client.tree.command(description="Log a measurement of an existing workout! 💪")
+@app_commands.autocomplete(workout=existing_workout_select_autocomplete)
+async def log(interaction: discord.Interaction, workout: str = ""):
+    logWorkout = LogWorkoutCommand(interaction, workout)
     logger.info("[INFO] Executing log command!")
     await logWorkout.execute()
+    clear_cached_workout_lists()
+
+
+@client.tree.command(description="Get all your personal bests! 🏋")
+@app_commands.choices(share=[app_commands.Choice(name="Yes", value="Yes"), app_commands.Choice(name="No", value="No")])
+async def pbs(interaction: discord.Interaction, share: app_commands.Choice[str] = "No"):
+    if isinstance(share, str):
+        shouldShare = share == "Yes"
+    else:
+        shouldShare = share.value == "Yes"
+
+    getPBs = GetPBsCommand(interaction, share=shouldShare)
+    logger.info("[INFO] Executing pbs command!")
+    await getPBs.execute()
 
 
 # TODO: progress command.
@@ -74,23 +89,6 @@ async def log(interaction: discord.Interaction):
 #     getProgress = GetProgressCommand(interaction)
 #     logger.info("[INFO] Executing progress command!")
 #     await getProgress.execute()
-
-
-@client.tree.command()
-@app_commands.choices(share=[
-    app_commands.Choice(name="Yes", value="Yes"),
-    app_commands.Choice(name="No", value="No"),
-    ])
-async def pbs(interaction: discord.Interaction, share: app_commands.Choice[str] = "No"):
-    """Get all your PB's!"""
-    if isinstance(share, str):
-        shouldShare = share == "Yes"
-    else:
-        shouldShare = share.value == "Yes"
-
-    getPBs = GetPBsCommand(interaction, share=shouldShare)
-    logger.info("[INFO] Executing pbs command!")
-    await getPBs.execute()
 
 
 client.run(TOKEN)
