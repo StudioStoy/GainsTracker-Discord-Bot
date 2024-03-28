@@ -6,7 +6,7 @@ from discord import SelectOption
 from discord.ui import Select
 from discord.ui import View
 
-from Common.Methods import categoryFromType, tidyUpString, getEmojiPerCategory
+from Common.Methods import tidyUpString, getEmojiPerCategory
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -22,7 +22,6 @@ class WorkoutDropDownView(View):
     def createWorkoutSelect(self):
         selectOptions = []
 
-        logger.info(f"Options amount: {len(self.workoutOptions)}")
         optionCount = 0
         for workout in self.workoutOptions:
             # Because of Discord limitation, only 25 options can show in the select view.
@@ -35,14 +34,16 @@ class WorkoutDropDownView(View):
             except KeyError:
                 workoutId = ""
 
+            # Because of Discord's 100-character limit in values, the key names have to be as short as possible.
             jsonData = {
-                "type": workout["type"],
-                "id": workoutId
+                "i": workoutId,
+                "t": workout["type"],
+                "c": workout["category"]
             }
 
             selectOptions.append(SelectOption(label=tidyUpString(workout["type"]),
                                               value=json.dumps(jsonData),
-                                              emoji=getEmojiPerCategory(categoryFromType(workout['type'])),
+                                              emoji=getEmojiPerCategory(workout['category']),
                                               default=False))
             optionCount += 1
 

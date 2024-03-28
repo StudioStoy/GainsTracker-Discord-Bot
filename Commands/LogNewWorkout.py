@@ -2,9 +2,9 @@ import logging
 
 import discord
 
-from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import GAINS_URL
 from Common.Methods import getDataFromResponse
+from Infrastructure.BaseCommand import BaseCommand
 from Views.LogWorkoutModal import LogWorkoutModal
 from Views.WorkoutDropDownView import WorkoutDropDownView
 
@@ -37,8 +37,9 @@ class LogNewWorkoutCommand(BaseCommand):
     async def createNewWorkoutCallback(self, selectedDict, interaction: discord.Interaction = None):
         session = await self.sessionCenter.get_session()
 
-        response = session.post(f"{GAINS_URL}/gains/workout", json={"workoutType": selectedDict["type"]})
-        selectedDict["id"] = getDataFromResponse(response)
+        response = session.post(f"{GAINS_URL}/gains/workout", json={"workoutType": selectedDict["t"]})
+        selectedDict["i"] = getDataFromResponse(response)["id"]
+        selectedDict["c"] = getDataFromResponse(response)["category"]
 
         if self.responsePositive(response):
             workoutModal = LogWorkoutModal(selectedDict, session=session)

@@ -3,9 +3,9 @@ import logging
 import discord
 from discord.ui import View, Button
 
-from Infrastructure.BaseCommand import BaseCommand
 from Common.Constants import GAINS_URL
-from Common.Methods import getDataFromResponse, tidyUpString, categoryFromType, getEmojiPerCategory
+from Common.Methods import getDataFromResponse, tidyUpString, getEmojiPerCategory
+from Infrastructure.BaseCommand import BaseCommand
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -52,7 +52,8 @@ class GetPBsCommand(BaseCommand):
                 self.currentPage = len(self.pages) - 1
 
         await interaction.response.defer()  # Silly compiler, .defer() does exist.
-        await interaction.edit_original_response(embed=self.pages[self.currentPage], view=self.getView(self.currentPage))
+        await interaction.edit_original_response(embed=self.pages[self.currentPage],
+                                                 view=self.getView(self.currentPage))
 
     async def execute(self):
         session = await self.sessionCenter.get_session()
@@ -70,8 +71,8 @@ class GetPBsCommand(BaseCommand):
                 return
 
             for workout in workouts:
-                if categoryFromType(workout['type']) not in categories:
-                    categories.append(categoryFromType(workout['type']))
+                if workout['category'] not in categories:
+                    categories.append(workout['category'])
 
             for category in categories:
                 embed = discord.Embed(
@@ -88,7 +89,7 @@ class GetPBsCommand(BaseCommand):
                     if workout["personalBest"] is None:
                         continue
 
-                    if tidyUpString(categoryFromType(workout['type'])) in page.title:
+                    if tidyUpString(workout['category']) in page.title:
                         workoutName = tidyUpString(workout["type"])
 
                         if inlineCount >= 2:

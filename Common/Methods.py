@@ -21,45 +21,6 @@ def getDataFromResponse(response) -> json:
         # Otherwise, there's no hope for this man.
 
 
-# TODO: Move this method to the backend API probably, as now the maintainability is abysmal here.
-def categoryFromType(workoutType: str):
-    types = {
-        'WeightedSquat': 'Strength',
-        'Abduction': 'Strength',
-        'Adduction': 'Strength',
-        'BenchPress': 'Strength',
-        'CalfExtensions': 'Strength',
-        'HackSquat': 'Strength',
-        'LegPress': 'Strength',
-        'ShoulderPress': 'Strength',
-        'DumbbellPress': 'Strength',
-        'BicepCurl': 'Strength',
-        'ChestPress': 'Strength',
-        'LatPullDown': 'Strength',
-        'BicepPullDown': 'Strength',
-        'PectoralFly': 'Strength',
-        'LowRows': 'Strength',
-        'DeadLift': 'Strength',
-        'HammerCurl': 'Strength',
-        'ClosePullUp': 'Reps',
-        'WidePullUp': 'Reps',
-        'DiamondPushUp': 'Reps',
-        'ClosePushUp': 'Reps',
-        'BodySquat': 'Reps',
-        'WidePushUp': 'Reps',
-        'Planking': 'TimeEndurance',
-        'JumpingJacks': 'TimeEndurance',
-        'JumpingRope': 'TimeEndurance',
-        'Walking': 'TimeAndDistanceEndurance',
-        'Running': 'TimeAndDistanceEndurance',
-        'Cycling': 'TimeAndDistanceEndurance',
-        'Swimming': 'TimeAndDistanceEndurance',
-        'Rowing': 'TimeAndDistanceEndurance',
-        'Bouldering': 'General'
-    }
-    return types[workoutType]
-
-
 def getEmojiPerCategory(category):
     match category:
         case "Strength":

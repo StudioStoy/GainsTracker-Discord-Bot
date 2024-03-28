@@ -7,17 +7,20 @@ import requests
 from discord.ui import Modal
 
 from Common.Constants import GAINS_URL
-from Common.Methods import categoryFromType, tidyUpString, dontBeAnIdiot
+from Common.Methods import tidyUpString, dontBeAnIdiot
 from Views.WorkoutDropDownView import getEmojiPerCategory
 from Views.WorkoutInputs import inputsPerCategory
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
+
 class LogWorkoutModal(Modal):
     def __init__(self, selectedWorkoutData, session: requests.Session = None):
         super().__init__(
-            title=f"{getEmojiPerCategory(categoryFromType(selectedWorkoutData['type'])) + tidyUpString(selectedWorkoutData['type'])}")
+            title=f"{getEmojiPerCategory(selectedWorkoutData['c']) + tidyUpString(selectedWorkoutData['t'])}")
+
+        logger.info(selectedWorkoutData)
 
         self.timeout = None
         self.session = session
@@ -26,13 +29,13 @@ class LogWorkoutModal(Modal):
         self.on_submit = self.submitDataCallback
 
     def createInputFields(self, workoutData: dict):
-        category = categoryFromType(workoutData['type'])
+        category = workoutData['c']
 
         for textInput in inputsPerCategory[category]:
             textInput: discord.ui.TextInput
 
             if textInput.custom_id == "generalInput":
-                match workoutData['type']:
+                match workoutData['t']:
                     case "Bouldering":
                         textInput.label = "Boulder level"
                         textInput.placeholder = '5a+'
@@ -44,7 +47,7 @@ class LogWorkoutModal(Modal):
     async def submitDataCallback(self, interaction: discord.Interaction):
         data: dict = {}
         try:
-            match categoryFromType(self.workoutData["type"]):
+            match self.workoutData["c"]:
                 case "Strength":
                     data = {
                         "Weight": float(tryAndFindInputFromModal(interaction.data, "weightInput")),
@@ -83,19 +86,18 @@ class LogWorkoutModal(Modal):
             raise RuntimeError
 
         requestData = {
-            "category": categoryFromType(self.workoutData["type"]),
+            "category": self.workoutData["c"],
             "data": data
         }
 
-        response = self.session.post(url=f"{GAINS_URL}/gains/workout/{self.workoutData['id']}/measurement",
+        response = self.session.post(url=f"{GAINS_URL}/gains/workout/{self.workoutData['i']}/measurement",
                                      json=requestData)
 
-        # TODO: some form of validation of the response
-
         if response.status_code == 200 or response.status_code == 204:
-            await interaction.response.send_message("GAINS💪 (successfully added)", ephemeral=True)
+            await interaction.response.send_message("💪GAINS🏋️ (successfully added)", ephemeral=True)
         else:
-            await interaction.response.send_message("Oopsie daisy something went wrong. Try again later bro.", ephemeral=True)
+            await interaction.response.send_message("Oopsie daisy something went wrong. Try again later bro.",
+                                                    ephemeral=True)
 
 
 def tryAndFindInputFromModal(interactionData, inputName):
@@ -116,18 +118,19 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="...",
                             insult="Really?")
-        raise RuntimeError("No incorrect time inputs bro.")
+        return
 
     if not isValid:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="Bro. Please only log the time in `hours (00:00:00)`, `minutes (00:00)` or `seconds (00)`.",
                             insult="Bro.")
-        raise RuntimeError("No incorrect time inputs bro.")
+        return
+
     elif totalSecondsFromTime(timeInput) == 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
                             insult="Go do a little more bro.")
-        raise RuntimeError("No incorrect time inputs bro.")
+        return
 
 
 def totalSecondsFromTime(time):

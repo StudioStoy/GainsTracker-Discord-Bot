@@ -48,8 +48,9 @@ class SessionCenter:
 
         response = await self.login(user_id)
 
-        if response.status_code != 200 or response.status_code != 204:
-            await self.interaction.response.send_message("I was just finishing my set.. Please try again. Bro.", ephemeral=True)
+        if response.status_code != 200 and response.status_code != 204:
+            await self.interaction.response.send_message("I was just finishing my set.. Please try again. Bro.",
+                                                         ephemeral=True)
             logger.error(f"Session cannot be created for user {user_id}: {response.status_code}")
 
         sesh.headers["Authorization"] = getDataFromResponse(response)
