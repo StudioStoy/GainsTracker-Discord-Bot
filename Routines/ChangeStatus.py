@@ -6,11 +6,12 @@ import discord
 
 async def changeStatus(client):
     while True:
-        randInt = random.randint(0, len(gymBroQuotes) - 1)
-
-        await client.change_presence(
-            activity=discord.Activity(type=discord.ActivityType.watching, name=gymBroQuotes[randInt]))
-
+        gymBroQuote = discord.Activity(
+            type=discord.ActivityType.custom,
+            name="Custom Status",  # Does nothing, but is required.
+            state=gymBroQuotes[random.randint(0, len(gymBroQuotes) - 1)]
+        )
+        await client.change_presence(activity=gymBroQuote)
         await asyncio.sleep(300.0)
 
 
