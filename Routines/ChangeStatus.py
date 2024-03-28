@@ -31,6 +31,6 @@ gymBroQuotes = [
     "Lifting weights and getting dates! 💖",
     "Train insane or remain the same! 🏋️",
     "Hustle for the muscle☀",
-    "Curls get the girls 💪 (or boys, if that's what you're into)! 💪",
+    "Curls get the girls! 💪 (or boys, if that's what you're into) 💪",
     "Swole is the goal, size is the prize! 🏅"
 ]
