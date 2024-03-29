@@ -4,7 +4,7 @@ import discord
 from discord.ui import View, Button
 
 from Common.Constants import GAINS_URL
-from Common.Methods import getDataFromResponse, tidyUpString, getEmojiPerCategory
+from Common.Methods import getDataFromResponse, tidyUpString, getEmojiPerCategory, timeStringFromTotalSeconds
 from Infrastructure.BaseCommand import BaseCommand
 
 logger = logging.getLogger()
@@ -99,15 +99,16 @@ class GetPBsCommand(BaseCommand):
                         pb = ""
                         match tidyUpString(page.title)[2:].strip():
                             case "reps":
-                                pb = "Reps: " + str(workout["personalBest"]["data"]["Reps"])
+                                pb="Reps: " + str(workout["personalBest"]["data"]["Reps"])
                             case "strength":
-                                pb = "Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
+                                pb="Weight: " + str(workout["personalBest"]["data"]["Weight"]) + " " + \
                                      str(workout["personalBest"]["data"]["WeightUnit"]) + "\nReps: " + \
                                      str(workout["personalBest"]["data"]["Reps"])
                             case "time endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"])
+                                pb="Time: " + timeStringFromTotalSeconds(int(workout["personalBest"]["data"]["Time"]))
                             case "time and distance endurance":
-                                pb = "Time: " + str(workout["personalBest"]["data"]["Time"]) + "\nDistance: " + \
+                                pb="Time: " + timeStringFromTotalSeconds(int(workout["personalBest"]["data"]["Time"]))\
+                                     + "\nDistance: " + \
                                      str(workout["personalBest"]["data"]["Distance"]) + " " + \
                                      str(workout["personalBest"]["data"]["DistanceUnit"])
                             case "general":

@@ -1,13 +1,12 @@
 import logging
 import re
-from datetime import datetime
 
 import discord
 import requests
 from discord.ui import Modal
 
 from Common.Constants import GAINS_URL
-from Common.Methods import tidyUpString, dontBeAnIdiot
+from Common.Methods import tidyUpString, dontBeAnIdiot, totalSecondsFromTime
 from Views.WorkoutDropDownView import getEmojiPerCategory
 from Views.WorkoutInputs import inputsPerCategory
 
@@ -60,17 +59,13 @@ class LogWorkoutModal(Modal):
                     }
                 case "TimeEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
-                    await timeInputValidation(timeInput, interaction)
-
                     data = {
-                        "Time": timeInput,
+                        "Time": await timeInputValidation(timeInput, interaction),
                     }
                 case "TimeAndDistanceEndurance":
                     timeInput = str(tryAndFindInputFromModal(interaction.data, "timeInput"))
-                    await timeInputValidation(timeInput, interaction)
-
                     data = {
-                        "Time": timeInput,
+                        "Time": await timeInputValidation(timeInput, interaction),
                         "Distance": float(tryAndFindInputFromModal(interaction.data, "distanceInput")),
                         "DistanceUnit": "Kilometers",
                     }
@@ -111,10 +106,12 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
     pattern = re.compile(r"[0-9]?[0-9]?:?[0-9]?[0-9]?:?[0-9]?[0-9]", re.IGNORECASE)
     isValid = pattern.match(timeInput)
 
+    seconds = totalSecondsFromTime(timeInput)
+
     if interaction is None:
         return isValid
 
-    if totalSecondsFromTime(timeInput) < 0:
+    if seconds < 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="...",
                             insult="Really?")
@@ -126,26 +123,10 @@ async def timeInputValidation(timeInput: str, interaction: discord.Interaction =
                             insult="Bro.")
         return
 
-    elif totalSecondsFromTime(timeInput) == 0:
+    elif seconds == 0:
         await dontBeAnIdiot(interaction=interaction,
                             idiotReason="Damn bro, only zero seconds bro? Watch out, you'll go negative next!",
                             insult="Go do a little more bro.")
         return
 
-
-def totalSecondsFromTime(time):
-    # yup this is great code, amazing even
-    if time.isdigit() or (time.startswith('-') and time[1:].isdigit()):
-        return int(time)
-
-    if time.count(':') == 2:
-        time_format = "%H:%M:%S"
-    elif time.count(':') == 1:
-        time_format = "%M:%S"
-    else:
-        time_format = "%S"
-
-    time_object = datetime.strptime(time, time_format)
-    total_seconds = (time_object.hour * 3600) + (time_object.minute * 60) + time_object.second
-    logger.info(f"total seconds: {total_seconds}")
-    return total_seconds
+    return seconds
